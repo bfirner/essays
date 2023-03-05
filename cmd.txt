@@ -1,1 +1,0 @@
-pandoc -o 20220430-PythonLambdaSurprises.html 20220430-PythonLambdaSurprises.md --strip-comments --standalone -B common/style.html -A common/footer.html --metadata pagetitle="Python's Unhappy Surprises"

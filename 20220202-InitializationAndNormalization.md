@@ -36,13 +36,13 @@ Again, from that same paper:
 Nowadays some other activation functions have generally replaced the sigmoid, but the important
 concept to learn is that parameter initialization should be done to get the outputs of
 neural network components into a range that produces a gradient with the chosen activation function
-and architecture. Now, the equation for the sigmoid is $\sigma(x) = \frac{1}{1+e^{-x}}$. Technically
+and architecture. Now, the equation for the sigmoid is $\sigma(x) = 1/(1+e^{-x})$. Technically
 there is no point where a gradient ceases to exist, but practically speaking the gradient becomes
 tiny as $x$ moves away from zero. In a world of real numbers this just slows down learning, but
 since we are doing neural networks on computers with floating point math we should expect the
 gradient to disappear when it becomes too small.
 
-Instead of adjusting the initial weights we could adjust something else -- an abundance of options
+Instead of adjusting the initial weights we could adjust something else--an abundance of options
 is often the case in neural networks. In this case, we could overcome small gradients with an
 increase in the initial learning rate (and large gradients by decreasing the learning rate). That
 opens up two other problems. First, the learning rate must match all of the parameters in the
@@ -67,4 +67,4 @@ or normalize weights in the last layer to match them. Third, control the gradien
 layers to enable learning. This means that output values should end up in areas of effective
 learning on subsequent activation layers and values shouldn't be so large or small that issues with
 floating point math manifest. The typical solution is to simply insert batch normalization layers
-into your network, and that solution works -- just remember that other solutions are also possible.
+into your network, and that solution works--just remember that other solutions are also possible.

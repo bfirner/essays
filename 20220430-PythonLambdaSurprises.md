@@ -105,7 +105,7 @@ A piece of syntax which can be evaluated to some value. In other words, an expre
 
 Now here is something fun. Let's change the code slightly:
 
-```python
+``` {.python .numberLines}
 import functools
 
 # A simple function to use with lambda and partial.
