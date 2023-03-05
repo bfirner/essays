@@ -176,7 +176,7 @@ pfunc(10) is  12
 fun(10) is  15
 </pre>
 
-Wait a moment -- somehow the lambda expression is using the value of 'a' from the main() function
+Wait a moment--somehow the lambda expression is using the value of 'a' from the main() function
 even though there is a different 'a' within the _thing_ function. So the lambda actually *does* look
 at its scope when searching for variables, even if it doesn't evaluate them at the time. My problem
 with these different behaviors is that they are _surprising_, which is not a good feature in a
@@ -189,8 +189,8 @@ language though, this _lambda_ is inconsistent with the rest of the programming 
 
 Speaking of the rest of the programming world, some core concepts in functional programming are
 side-effect free functions and closures.  In a side-effect free world functions can only access
-variables that are passed to them or created withinn the function. This makes those functions much
+variables that are passed to them or created within the function. This makes those functions much
 easier to test. A closure is the scope created when creating a new function, for example a _lambda_
 function. In other languages with lambdas it is clear what variables are _captured_ when the lambda
 functions are created. The fact that Python lambda functions are expressions that are not evaluated
-until called makes then unecessarily confusing.
+until called makes then unnecessarily confusing.
