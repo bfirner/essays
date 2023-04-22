@@ -5,7 +5,7 @@ set xrange [0:1]
 
 set ylabel "error"
 
-set terminal pngcairo enhanced size 360, 220
+set terminal pngcairo enhanced size 480, 280 fontscale 1.3 linewidth 1.5
 
 # We will be plotting synthetic lines, use enough samples to make them look okay.
 set samples 100
