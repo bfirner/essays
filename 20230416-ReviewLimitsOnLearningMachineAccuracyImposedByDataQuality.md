@@ -94,3 +94,35 @@ impossible task.
 
 Let's jump into those modern examples, starting with ImageNet.
 
+The ImageNet challenge, formally the ImageNet Large Scale Visual Recognition Challenge (ILSVRC), has
+image scraped from around the Internet that belong to one of 1,000 different classes. There are
+more than 1.2 million training images, 50,000 validation images, and 100,000 test images. Labelling
+was crowdsourced with Mechanical Turk, so the labels are questionable. If we check
+[paperwidthcode](https://paperswithcode.com/sota/image-classification-on-imagenet), we will learn
+that "Top-1 Accuracy", meaning the accuracy with the highest probability class label, cleared 90% in
+early 2020 when [EfficientNet-L2](https://paperswithcode.com/paper/meta-pseudo-labels) achieved
+90.2% accuracy. Since then, the highest classification accuracy has ascended too... 91.1%.
+
+So, why not 100%? Let's do as the authors of "Limits On Learning Machine Accuracy Imposed by Data
+Quality" and check for ourselves.
+
+Consider the related classes: "toilet_tisuee" and "toilet_seat" (yes, these are really two of the
+1,000 classes in ILSVRC). Clearly there can be some overlap here. How much? I checked the 1,300
+examples of toilet seats and found that 195 of them contained toilet paper (in some form--my count
+is likely imperfect, but I will not be looking through 1,300 pictures of toilets for a second time).
+This means that 15% of the toilet seat images could be legitimately labelled toilet tissue instead.
+
+Now, I didn't check for any of the other 998 classes inside of the toilet seat images, but some of
+them may also occur. Before you say, "but prior information would inform the DNN that images inside
+of a bathroom belong to either the toilet seat or the toilet paper class" I want you to know that
+some of the toilet seat images are not inside bathrooms. There are pictures of grassy fields filled
+with toilets, beaches with toilet seats laying in the sand, and action photos of people playing ring
+toss with toilet seats.
+
+To conclude, is it possible that 8% of image labels are ambiguous, even to a person? Yes, I think
+that could be the case, so 92% accuracy may be close to the upper limit of performance on ILSVRC.
+Some classes are certainly more clean than others, and the toilet classes may be some of the worst,
+but it is reasonable to conclude that reaching 100% accuracy on this dataset is impossible.
+
+That example dealt with noise in labels due to ambiguity in the data. Let's look at a different case
+where the data itself it just insufficient. We can draw an example of this from autonomous vehicles.
