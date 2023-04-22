@@ -5,6 +5,16 @@
 # All outputs will be placed in the html folder.
 
 mkdir -p html
+
+# Descend into the figures directory, build the figures, and copy them into the html directory.
+mkdir -p html/figures
+cd figures
+for I in *.gp; do
+    gnuplot $I;
+done
+cp *.png ../html/figures/
+cd ../
+
 rm index.md
 for md in *.md;
 do
@@ -12,9 +22,9 @@ do
     title=`head -n 1 ${md}`
     basename=${md%%.md}
     date=${md%%-*}
-    year=$(echo $title | cut -c 1-4)
-    month=$(echo $title | cut -c 5-6)
-    day=$(echo $title | cut -c 7-8)
+    year=$(echo $date | cut -c 1-4)
+    month=$(echo $date | cut -c 5-6)
+    day=$(echo $date | cut -c 7-8)
     echo "Writing \"$title\" to html/${basename}.html"
     # Put the new item at the top of the index file. If the files are named with their dates first
     # then this should put the newest ones on top.
