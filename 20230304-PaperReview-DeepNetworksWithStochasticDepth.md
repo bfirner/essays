@@ -62,7 +62,7 @@ authors make with their large variety of techniques, only plots ImageNet Top1 ac
 82%. The stochastic depth paper shows a drop in test error on ImagNet of only 1% over a "basic"
 152-layer ResNet with just their technique.
 
-The stochastic depth paper showed must larger gains in smaller datasets. Indeed, the author's lament
+The stochastic depth paper showed much larger gains in smaller datasets. Indeed, the author's lament
 their tiny boost. From the paper it is clear that they think a 1% increase is nothing great:
 
 > In the words of an anonymous reviewer, the current generation
