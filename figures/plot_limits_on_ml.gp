@@ -43,3 +43,40 @@ set output "error_vs_noise.png"
 plot 0.6 - 0.3*(1 - 0.01**x) w lines title "testing error" dashtype 1 lc "black"
 unset arrow
 unset label
+
+# Fourth plat: car
+unset xlabel
+unset ylabel
+unset ytics
+unset xtics
+unset border
+
+set output "car_fov.png"
+
+# Draw a "car"
+carwidth=0.25
+carheight=0.15
+x1 = 0.0
+x2 = carwidth
+y1 = 0.5-(carheight/2)
+y2 = 0.5+(carheight/2)
+set arrow from x1,y1 to x2,y1 nohead dashtype 1 lc "black"
+set arrow from x1,y1 to x1,y2 nohead dashtype 1 lc "black"
+set arrow from x2,y2 to x1,y2 nohead dashtype 1 lc "black"
+set arrow from x2,y2 to x2,y1 nohead dashtype 1 lc "black"
+set label at carwidth/3,0.5 "Car"
+
+# Triangular field of view
+set arrow from carwidth,0.5 to 0.9,1 nohead dashtype 1 lc "black"
+set arrow from carwidth,0.5 to 0.9,0 nohead dashtype 1 lc "black"
+set arrow from 0.9,1 to 0.9,0 nohead dashtype 1 lc "black"
+set label at carwidth+0.05,0.5 "FOV"
+
+# Labels for 'd' and 'width'
+set arrow from carwidth+0.01,0.5 to 0.89,0.5 heads size 0.04,90 dashtype 2 lc "gray"
+set label at (1+carwidth)/2,0.55 "d"
+
+set arrow from 0.95,1 to 0.95,0 heads size 0.04,90 dashtype 2 lc "gray"
+set label at 0.97,0.5 "w"
+
+plot -10 notitle

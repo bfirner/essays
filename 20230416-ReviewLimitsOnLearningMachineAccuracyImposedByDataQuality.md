@@ -6,15 +6,15 @@ This
 published in 1994 and written by Corinna Cortex, Larry Jackel, and Wan-Ping Chiang, is both a good
 read and is still relevant for today's machine learning researchers. As was the case with many
 papers of the time, it was written with a clear, direct style to inform colleagues of something
-interesting and important. It lacks the overly-complicated equivocation of modern papers, which are
+interesting and important. It lacks the overly complicated equivocation of modern papers, which are
 often written by torturing phrases until they lie still on the page to create an illusion of careful
 planning and rational design. The paper only cites a mere 8 references, which makes it quite easy to
 check the state of research at the time. It's a breath of fresh air compared to modern papers that
 have a page or more of references lurking at the end.
 
 The paper describes why learned models exhibit an upper bound on their performance as a function of
-their data quality.  The data that they analyzed was from failures in a telecommunication system,
-which was relevant to the AT&T network at the time.  It may not feel relevant to a machine learning
+their data quality. The data that they analyzed was from failures in a telecommunication system,
+which was relevant to the AT&T network at the time. It may not feel relevant to a machine learning
 researcher in the 2020s, but the paper's methodology is insightful. I will endeavor to both explain
 the paper and to show how it is relevant in the modern world of enormous datasets and billion
 parameter models.
@@ -24,8 +24,8 @@ around to smash every problem within reach you, as a rational being capable of c
 first take a few moments to estimate the upper bound of what is achievable with your statistical
 model. For example, if you are attempting to predict the state of a fair coin after flipping it you
 would be wise to only promise 50% accuracy from your model since a fair coin is random. Most
-problems we try to solve are hopefully less random than that, but it is rare that we can expect 100%
-success with any system.
+problems we try to solve are less random than that, but it is rare that we can expect 100% success
+with any system.
 
 First I'll discuss the contents of the paper. Afterwards, I will draw two examples from modern
 machine learning, specifically ImageNet and autonomous vehicles, to illustrate how those ideas can
@@ -63,15 +63,15 @@ data match. Now, getting training and testing to match completely is impossible,
 purposes if the number of training examples is great enough then the model will not have enough
 parameters to simple learn each of those examples individually and it must generalize.
 
-Of course, in modern machine learning we employ gigantic models all of the time, with seemingly no
-ill-effects. We can get away with this if we use strong regularizers. These techniques enforce
-sparsity in the model, which resists fitting parameters that only apply to small number of examples
-from the training set.
+Of course, in modern machine learning we employ gigantic models with gleeful abandon, and with
+seemingly no ill-effects. We can get away with this if we use strong regularizers. These techniques
+enforce sparsity in the model, which resists fitting parameters that only apply to small number of
+examples from the training set.
 
 ![Figure 2. As we increase the size of a dataset, we expect for it to become impossible for the
 model to memorize it, so the training loss will increase. We also expect the testing error to
 decrease, because it becomes increasingly likely that the training set contains examples that are
-very close to the testing set.](figures/error_vs_datasize.png)
+close to those in the testing set.](figures/error_vs_datasize.png)
 
 One thing that has not changed over time is machine learning's hunger for data. More data means that
 we can increase our model size and increases the likelihood that our training data covers all of the
@@ -126,3 +126,42 @@ but it is reasonable to conclude that reaching 100% accuracy on this dataset is 
 
 That example dealt with noise in labels due to ambiguity in the data. Let's look at a different case
 where the data itself it just insufficient. We can draw an example of this from autonomous vehicles.
+
+![Figure 4. A camera mounted on a car has a field of view (FOV) that covers more physical area the
+farther from the vehicle you look. Starting from the bottom row of pixels and until you reach the
+horizon in the iamge, each row will have more visible area. The angle of the FOV remains constant,
+but because the physical area is increasing the pixels per unit area decreases.](figures/car_fov.png)
+
+Figure 4 (crudely) illustrates a car with a forward-facing camera. The bottom row of pixels visible
+from the camera will be a narrow part of the road close to the vehicle. As you move up each for of
+pixels towards the row with the horizon, the physical area covered by that row of pixels will
+increase. The camera's field of view (FOV), in degrees, has not changed, but the field of view in
+physical area has gone up. That means that the number of pixels per unit area decreases.
+
+This decrease in resolution means that more distant objects have worse resolution than nearer
+objects. This isn't exactly world-shaking news, but consider the task of lane location prediction
+for an autonomous vehicle. If the lane and lane markers get too small, then lane prediction will
+become impossible.
+
+The area covered by the image at each row of pixels increases with distance, $d$. The physical
+width, $w$, is determined by:
+
+$w = tan(FOV/2)*2d$
+
+At 200m, a 120 FOV camera covers an area 693 meters wide. A 3.5m lane only fills about 0.5% of the
+image. A standard 1920 pixel wide camera image would use less than 10 pixels for that lane. That
+sounds okay--but what about the lane markers?
+
+Lane markers are only about 10cm wide. That's 0.015% of the image or a quarter of a pixel in the
+1920 pixel wide example. A white lane marker on a black road will end up being about 1/4 of its
+expected brightness, which is probably okay under ideal conditions. However, when the marking is
+worn down or when there is glare on the asphalt from the sun or overhead lights on a wet surface the
+problem clearly becomes more difficult. In conclusion, you should expect performance to drop with
+distance almost linearly.
+
+We've looked at two examples of how data can limit your DNN prediction quality. In ImageNet, bad or
+ambiguous labels will decrease performance. In autonomous vehicles, and other robotics applications,
+image quality can constrain your maximum performance. I recommend doing a quick estimate of your
+theoretical peak performance before starting any DNN work. Even if you find nothing terribly wrong
+with your data, you will at least know how high performance *should* be able to go, which is better
+than just guessing.
