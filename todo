@@ -1,0 +1,49 @@
+C++ tricks:
+    Scoping with brackets
+        Used with std::unique_lock
+    Assigning into const references.
+    std::unique_ptr
+    std::shared_ptr
+    pointers are iterators
+
+
+
+Show how to hand code a detector. This is a good demo of receptive fields.
+
+Increased groups with different dropout for PCA. Also see if LRN or somesuch is a good norm without
+doing a channel wise 1x1 conv
+
+Pretrain a model to reconstruct arbitrary shapes using triangles. Is there a way to make a conv
+filter that works in any orientation? A projection of the original image that the same filter would
+work on? Maybe a tiling of the original image? For example, a penrose tiling would old every
+orientation, eventually.
+
+
+Python trash:
+- You can call a function with any ol' arguments, it doesn't check
+- You can call a function and then use variables that exist in the local (calling) scope, but not in
+  the function scope. This is an easy mistake when you refactor some code by copying some out of a
+local spot and putting it into the function.
+- (from James) You can iterate through a list with a tuple.
+
+- Member function like this:
+    def update(predictions, labels):
+  gives error:
+    TypeError: update() got multiple values for argument 'predictions'
+  when called using named parameters but is actually just missing 'self'. 'self' gets autopassed as
+  the first argument
+
+
+This is actually an interesting concept closely releated to polyominos:
+It's Hard for Neural Networks toLearn the Game of Life
+https://arxiv.org/abs/2009.01398
+
+# Paper Review: Regularization Learning Networks: Deep Learning for Tabular Datasets
+
+* NeurIPS 2018
+* DNNs underperform Gradient Boosting Trees (GBTs) on tabular datasets. Why?
+* Tabular data with class inputs are bad for continuous DNNs
+  * One-hot vectors explode the input space and also lose relationships between input classes
+* Tabular inputs represent different data types, which aren't of the same scale or distribution
+* Introduce Regularization Learning Networks which use counterfactual loss
+  * RLNs learn regularization simultaneously with the network weights
