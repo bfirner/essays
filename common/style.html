@@ -8,7 +8,6 @@ html {
 }
 body {
   margin: 0 auto;
-  max-width: 36em;
   padding-left: 50px;
   padding-right: 50px;
   padding-top: 50px;
@@ -22,7 +21,7 @@ div.footer {
   font-size: 12px;
   color: #3a3a3a;
 }
-@media (max-width: 600px) {
+@media (max-width: 800px) {
   body {
     font-size: 0.9em;
     padding: 1em;
@@ -31,6 +30,7 @@ div.footer {
 main {
     position: relative;
     order: 1;
+    min-width: 420px;
 }
 div.sidebar {
     position: sticky;
@@ -42,5 +42,12 @@ div.sidebar {
 }
 div.container {
     display: flex;
+}
+figure {
+    max-width: 480px;
+    width: 90%;
+}
+img {
+    width: 100%;
 }
 </style>

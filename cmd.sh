@@ -43,7 +43,7 @@ do
     # dates first then this should put the newest ones on top.
     # The sponge command is from the moreutils package.
     (echo -e "$year-$month-$day: [$title](${basename}.html)\n"; cat index.md) | sponge index.md
-    (echo -e ["$year-$month: $title](${shortname}.html)\n"; cat sidebar.md) | sponge sidebar.md
+    (echo -e ["$year-$month: $shortname](${basename}.html)\n"; cat sidebar.md) | sponge sidebar.md
 done
 
 # Make the sidebar a div that follows main.
