@@ -52,7 +52,7 @@ not have a method that can completely ignore the presence of noise in our datase
 Before going farther though, I'm going to reproduce some of the figures from the paper so that we
 can all share a common vocabulary for this discussion.
 
-<!-- Uses extention implicit_figures -->
+<!-- Uses extension implicit_figures -->
 ![Figure 1. Larger models decrease error until they learn the training set, but the testing error does not
 always follow the same curve.](figures/error_vs_capacity.png)
 
