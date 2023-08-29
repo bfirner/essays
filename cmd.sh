@@ -33,17 +33,17 @@ do
     month=$(echo $date | cut -c 5-6)
     day=$(echo $date | cut -c 7-8)
     # Make a shorter name for the sidebar
-    if [[ ${#basename} < 40 ]]; then
-        shortname=$(echo $basename | cut -c1-37)
-        shortname=$(echo $shortname "...")
+    if [[ ${#title} > 40 ]]; then
+        shorttitle=$(echo $title | cut -c1-37)
+        shorttitle=$(echo $shorttitle "...")
     else
-        shortname=$basename
+        shorttitle=$title
     fi
     # Put the new item at the top of the index and sidebar files. If the files are named with their
     # dates first then this should put the newest ones on top.
     # The sponge command is from the moreutils package.
     (echo -e "$year-$month-$day: [$title](${basename}.html)\n"; cat index.md) | sponge index.md
-    (echo -e ["$year-$month: $shortname](${basename}.html)\n"; cat sidebar.md) | sponge sidebar.md
+    (echo -e ["$year-$month: $shorttitle](${basename}.html)\n"; cat sidebar.md) | sponge sidebar.md
 done
 
 # Make the sidebar a div that follows main.

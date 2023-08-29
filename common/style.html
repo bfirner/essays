@@ -34,12 +34,26 @@ main {
     max-width: 600px;
 }
 div.sidebar {
+    font-family: Georgia, serif;
+    text-rendering: optimizeLegibility;
+    font-kerning: normal;
     position: sticky;
     order: 2;
     top: 2rem;
     max-width: 20em;
     min-width: 12em;
     align-self: baseline;
+    padding-left: 5em;
+}
+div.sidebar a:link {
+    color: #555555;
+    font-style: italic;
+}
+div.sidebar a:visited {
+    color: #444444;
+}
+div.sidebar a:active {
+    color: #773333;
 }
 div.container {
     display: flex;
