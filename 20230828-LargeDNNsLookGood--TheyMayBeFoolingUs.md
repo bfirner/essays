@@ -1,5 +1,5 @@
-Large DNNs Look Good -- They May Be Fooling Us
-----------------------------------------------
+Large DNNs Look Good, But They May Be Fooling Us
+------------------------------------------------
 
 Deep neural networks (DNNs), like a fine cake of Pu'er tea, have gotten better with age. Our
 hardware grows in capacity, we make our DNNs bigger, and our machine learning hammer smashes ever
@@ -7,9 +7,10 @@ more difficult problems. Can we expect that to go on forever? How long until the
 even worth it to brush your teeth when powerful language models are going to do everything for us by
 some time next week?
 
-It is unfortunate, but at our current rate of progress it doesn't seem that those possible futures
-are close. It is true that research labs and industrial groups are pressing forward with a seemingly
-endless compaign of shock an awe--and the breakthroughs in robotics, large language models, and image
+It is unfortunate, but people are getting swept away by the hype without considering how to build
+the future.
+It is true that research labs and industrial groups are pressing forward with a seemingly
+endless campaign of shock an awe--and the breakthroughs in robotics, large language models, and image
 generation have generated justifiable excitement. However, if we dig
 into the underlying technology, we will be forced to admit that stochastic gradient descent (SGD),
 the "learning" algorithm that is behind all of our current network training, is flawed in a way that
@@ -26,6 +27,11 @@ to learn a seemingly simple problem. They make the network larger and the succes
 goes up, not to 100% but who expects perfection? AI wins, we all go home happy. Let's dig into what
 happened here though, since the problem is simple enough for us to fully pick apart but has enough
 depth to demonstrate a problem.
+
+There are many lessons we can learn from this, but the most important thing that we can realize is
+that it is possible to apply deep learning to a problem in a such a way that we get seemingly good
+results while, in actuality, the neural network is converging to a bad (meaning inefficient and
+unreliable) solution.
 
 ## Conway's Game of Life
 
@@ -109,8 +115,8 @@ The second `1x1` filter has a bias of `1` so that it default to having the cell 
 the single input feature guarantees that the output goes to 0 (after the ReLU) if the first `1x1` has
 a positive output.
 
-Thus we achieve an exact solution to the game of life with this three layer network. To obtain
-networks that can successfully predict multiple steps of the game of life, we can just duplicate the
+Thus we achieve an exact solution to the Game of Life with this three layer network. To obtain
+networks that can successfully predict multiple steps of the Game of Life, we can just duplicate the
 three layers for as many steps as desired.
 
 ## The Deep Learning Hammer
@@ -127,7 +133,7 @@ train a network like this:
 The script will train a network and then test it with 1000 starting positions on 5 by 5 boards. If
 it prints out `Training failure` at the end, then the network failed to predict all 1000 final
 states correctly. I tried training 20 times and none of the networks were successful at playing the
-game of life. Some of them got over 60% of the outputs correct, but we want 100%. Is there something
+Game of Life. Some of them got over 60% of the outputs correct, but we want 100%. Is there something
 wrong with the network?
 
 To prove that the network is capable of performing the task, we can initialize the weights and biases
@@ -151,8 +157,8 @@ usual bag of tricks at this. Or in this case we can use some more options that I
 * `--use_sigmoid`: This puts a [sigmoid](https://pytorch.org/docs/stable/generated/torch.nn.Sigmoid.html) at the end of the
   network. This makes convergence simpler by allowing "close enough" outputs since sigmoid bottoms out
   at 0 and maxes out at 1. We round the outputs of the DNN to the nearest whole integer too.
-* `--activation_fun LeakyReLU`: LeakyReLU has a gradient when the input is negative, making things
-  less likely to get "stuck" than with a ReLU. Works well with the sigmoid output.
+* `--activation_fun LeakyReLU`: [LeakyReLU](https://pytorch.org/docs/stable/generated/torch.nn.LeakyReLU.html) has a gradient when the input is negative, making things
+  less likely to get "stuck" than with a [ReLU](https://pytorch.org/docs/stable/generated/torch.nn.ReLU.html). Works well with the sigmoid output.
 * `--normalize`: This normalizes the outputs to the range -0.5 and 0.5 (instead of 0 and 1), changes
   initial weight initialization to a small range around 0, bias is uniform from -1 to 1, and adds dropout. Typical tweaks from a professional setting.
 * `--batch_size 128`: A large batch size helps keep learning smooth. This is hand-wavey; basically
@@ -162,13 +168,18 @@ usual bag of tricks at this. Or in this case we can use some more options that I
 * `--d_factor m`: Make the DNN `m` times deeper. Each layer is copied `m` times, rounded down.
 * `--use_cuda`: All this stuff will make training slow, so it's time to break out the GPU.
 
-    python3 gameoflife.py --m_factor 20 --d_factor 3 --use_sigmoid --activation_fun LeakyReLU --normalize --batch_size 128 --batches 10000 --use_cuda
+We'll use all of those options, but for the moment let's skip making the network deeper as that will
+make training even more complicated (e.g. we'll have to use tricks to deal with vanishing gradients
+like [stochastic depth](20230304-PaperReview-DeepNetworksWithStochasticDepth.html)). Our training
+command will look like this:
 
-![Figure 3. Likelihood of complete model success over 1000 tests after training to predict a single step in the game of life. Take note that a d_factor or 1 and 1.5 are the same since we round down (the line is just here to match future figures). Doubling the depth vastly decreases the success likelhood, probably because it would require some tweaks to learning rates. In general, training deeper networks is harder.](figures/1_step_gol_results_line.png)
+    python3 gameoflife.py --m_factor 20 --d_factor 1 --use_sigmoid --activation_fun LeakyReLU --normalize --batch_size 128 --batches 10000 --use_cuda
 
-![Figure 4. The success rates for individual tiles is very high, even when the model was not 100%
-successful. This actual could have contributed to the lack of convergence of the deeper models.
-Since there was less error they began learning more slowly as they approached correctness.](figures/1_step_gol_results_line_avg.png)
+The `--steps` option can be used to add more than 1 step. Let's test with up to three steps.
+
+![Figure 3. Likelihood of complete model success over 1000 tests after training to predict one, two, or three steps in the Game of Life. Some results are quite noisy and would require more than 20 models to get a smooth trend line. If we were training these models "for real," the first time we hit 100% accuracy we would stop.](figures/1_depth_small_steps_gol_results_line.png)
+
+![Figure 4. The success rates for individual tiles over all of the 20 trained models. These results can be thought of as the classification accuracy at each tile given the input state, which produces a smoother result than the all-or-nothing success of the model.](figures/1_depth_small_steps_gol_results_line_avg.png)
 
 The results? First of all, training is slower so we need a GPU to speed things up (reducing training
 time by about 80% for me). It's important to notice that I didn't optimize all of the data
@@ -176,63 +187,66 @@ generation and training steps, but a larger network architecture will always slo
 matter how hard we try to optimize everything.
 
 Forget that slowdown though, the script printed out `Training success` at the end with high
-probability. Even multiplying the number of layers by five did the trick, so we're done, right?
-
-Predicting one step in the game of life is pretty tame.
-Let's try predicting two steps instead of one. Add `--steps 2` to the command line options.
-
-![Figure 5. Model success when predicting two steps in the game of life. Things are looking worse.](figures/2_step_gol_results_line.png)
-
-![Figure 6. The success rates for individual tiles is still high. Notice that looking at the results this way shows a very smooth progression. This is the type of error that people usually look at when training a model, not a measure of absolute success or failure as in Figure 5.](figures/2_step_gol_results_line_avg.png)
+probability. Even multiplying the number of layers by five did the trick for one step, so we're
+done, right? What about with more steps?
 
 Two steps is harder than one step. Still though, it looks like making the network wider will still
-solve the problem.
+solve the problem. At least we get a working network sometimes, and in an industrial setting that
+just means that we buy more machines and train multiple models simultaneously. One of them is bound
+to be good.
 
-![Figure 7. Model success when predicting three steps in the game of life. There finally seems to be some gain when making the network deeper.](figures/3_step_gol_results_line.png)
+Will that always be a good plan? It looks like we can keep making the network larger though, and
+just keep training models until one of them looks good, right? We will just have to spend a little
+bit of time retuning things as we add more steps.
 
-![Figure 8. The success rates for individual tiles still has a consistent rate of growth along with
-the width of the network layers.](figures/3_step_gol_results_line_avg.png)
-
-Results when predicting three steps are, predictably, worse than with two. Even with a large
-expansion in network capacity, around three quarters of the models trained aren't good.
-
-It looks like we can keep making the network larger though, and just keep training models until one
-of them looks good, right? We will just have to spend a little bit of time retuning things as we add
-more steps.
-
-Well...at each step this becomes more difficult. Adding a step to the prediction requires
-another set of `3x3` convolution followed by two `1x1` convolutions. We also multiply the widths of
-all layers by some amount, greatly increasing the network size. This has two consequences:
+Increasing the network size is not always trivial. This has two consequences:
 
 1. Training time increases, so if any tuning is required that will also take longer.
 2. Eventually our GPU runs out of memory and we will need to train on multiple GPUs. See the
    previous step.
 
-So what? This is how deep learning works--buy more GPUs, make more money. This philosophy is not
-sustainable.
+So what? This is how deep learning works--buy more GPUs, make more money. Unfortunately, this
+philosophy is not sustainable.
 
-In this case, we know that the game of life has a simple solution and it is clear that training the
-DNN to 100% takes vastly more capacity than is required. What if most, or even all, of the problems
-that we solve with DNNs have the same problem? Would we notice?
+Let's look at results when we need to predict more steps.
 
-When training these models the loss goes down and success per tile goes up. If we think of this as a
+![Figure 5. Likelihood of complete model success over 1000 tests after training to predict more steps steps in the Game of Life. With a larger number of steps the results don't look so good.](figures/1_depth_gol_results_line.png)
+
+![Figure 6. The success rates for individual tiles over all of the 20 trained models. A success rate of 0.5 is what we expect if the network is just "guessing".](figures/1_depth_gol_results_line_avg.png)
+
+Looking at figures 5 and 6 we can see that eventually brute forcing the problem won't work any more.
+Now, we haven't tried to make the models deeper, so it is possible that there is a good set of
+hyper-parameters that will blow this problem out of the water. Certainly, the way that fact that
+predictions are stuck at around 50% correct in the higher step problems implies that the DNN
+collapses into a failed state, so careful management of the training could lead to better results.
+
+This problem shouldn't be so difficult though.  We know that the Game of Life has a simple solution
+and it is clear that training the DNN to 100% success takes vastly more capacity than is required.
+What if most, or even all, of the problems that we solve with DNNs have the same problem? Would we
+notice?
+
+When training these models, the loss goes down and success per tile goes up. If we think of this as a
 classification problem for individual tiles where the classes are "dead" and "alive" the success
-rate per tile is going up nicely (see Figures 6 and 8) even when the model failure rates are high.
+rate per tile is going up nicely (see Figures 3 and 4) even when the model failure rates are high.
 In fact, if training a model was too costly we might settle for the best model out of a week's worth
 of training, even if the best model was perfect.
 
-Imagine that we had been given this problem and started directly at a large number of steps, perhaps
-ten or twenty. Also imagine that we were only given the input and the output. It would have been
-tricky for use to figure out the rules to the game, so after training a model with 99.5% accuracy we
-may have concluded that it was pretty good and been satisfied with ourselves. I conjecture that many
-machine learning problems are actually very similar to this one. The DNN is learning some nonsense
-rules that are *extremely* inefficient, but we don't notice because the numbers keep going up. It's
-not like a human could look at the million training examples and do a better job. In the end, we use
-gigantic networks to solve small problems because we don't know how to make DNN training work with
-small models and don't have a good way to tell that the model had gotten stuck in a bad state.
+Imagine that we did not know the rules to the game when we were given the problem. Let's also say
+that we started directly at a large number of steps, perhaps ten or twenty. If we were given a few
+million example inputs and outputs it would have been tricky for us to figure out the rules to the
+game. If we trained a model with 90% accuracy we may conclude that the result was pretty
+good and be satisfied with ourselves. I conjecture that many machine learning problems are
+actually very similar to this one, and we are only satisfied with our results because no one has
+demonstrated that results should be better.
+
+In this case, the DNN is learning rules and correlations that are *extremely* inefficient, but we
+don't notice because the numbers keep going up. It's not like a human could look at the million
+training examples and do a better job. In the end, we use gigantic networks to solve small problems
+because we don't know how to make DNN training work with small models and don't have a good way to
+tell that the model had gotten stuck in a bad state.
 
 I'll write a follow-up to this post where we can dig into what, exactly is going wrong during
-training. Even if you don't believe that the game of life is similar to other problems,
+training. Even if you don't believe that the Game of Life is similar to other problems,
 understanding how SGD can fail us is still an interesting topic.
 
 
