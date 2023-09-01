@@ -46,22 +46,40 @@ $2^9$ possible states in a `3x3` filter's receptive field, so that would take 20
 force.
 
 Let's say that things don't go so badly and the weights of the corner positions, which are
-uncorrelated with the desired output, go to `0` quickly. Now there are $2^5$ filters to find, or
-only 32. Let's say that the DNN quickly learns 30 of them--but there are only 30 filters in that
-layer. The DNN will be stuck, because if it changes any of the existing filters it will get worse.
+uncorrelated with the desired output, go to `0` quickly. Now there are $2^5$ filters to find, which
+is only 32. Let's say that the DNN quickly learns 30 of them--but there are only 30 filters in that
+layer. The DNN will be stuck, because if it changes any of the existing filters it will get worse
+and the loss will go up.
 Each of the existing filters leads to a "correct" output $30/32$ times, so the training loss won't
 pull them out of their current states. The DNN is now stuck in a local minima.
 
 That isn't even a worst case--at least some of the outputs are correct. Imagine a case where the
-gradient sometimes pull values one way and sometimes pull them in another way. Those parameters will
-get "stuck". Now, if some of those outputs are "solved" by other parameters the loss for those cases
-will go down, freeing those parameters to move to solve the inputs that still lead to high loss, but
-one the DNN gets stuck that can no longer happen.
+gradient sometimes pulls values one way and sometimes pull them in another way, but never pulls very
+strongly. Those parameters will get "stuck" because the loss surface is too flat. Now, if some of
+the desired outputs are "solved" by other parameters the loss for those cases will go down, freeing
+those parameters to move to solve the inputs that still lead to high loss, but one the DNN gets
+stuck that can no longer happen.
 
 This is perhaps difficult to visualize, so let's try to take a look at some real examples.
 
-![Figure 3. The change in loss over a "walk" from the local minima of several trained models to the
-global minima.](figures/1_depth_gol_results_line_avg.png)
+![Figure 3. The change in loss over a "walk" from a minimal correct solution to various local minima
+from 10 different training runs. The model is predicting a single step in the game and has no extra
+capacity. Observe that even thought the starting position has a lower loss than the result from
+training, the path from one to the other has one or more areas of positive slope so gradient
+descent will not avoid the local minima.](figures/bad_to_good_walk_step1_mfactor1.png)
+
+![Figure 4. The loss walk from a minimal solution to another 10 trained models, this time with
+the number of filters per layer multipled by 5 (m_factor = 5). Observe that the loss surface is
+smoother and the the local minima are acceptable solutions.](figures/bad_to_good_walk_step1_mfactor5.png)
+
+![Figure 5. The loss walk for 2 steps with m_factor = 1. The loss surface is not smooth and SGD is
+easily trapped in local minima far from a good solution.](figures/bad_to_good_walk_step2_mfactor1.png)
+
+![Figure 6. The loss walk for 2 steps with m_factor = 5. As in Figure 3 the loss surface is smoother
+with the additional layers, but it there are still minima where the training progress can become
+stuck. The complexity of the loss surface increases with the increase in steps.](figures/bad_to_good_walk_step2_mfactor5.png)
+
+<!-- TODO Add in some random walks to show how the surface changes in different random directions.  -->
 
 <!-- Summarize previous results -- larger networks seem to get better, but are very inefficient -->
 
