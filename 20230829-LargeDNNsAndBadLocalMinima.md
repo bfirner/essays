@@ -32,7 +32,8 @@ of which is noisily correlated with the desired output and the other which can b
 output exactly--dropout can be used to force the weight of the noisy input to 0).
 
 To get a "good" gradient, there must exist some parameters that have an output that is close to the
-correct one such that a "path" over the loss surface exists that is mostly downhill from the
+correct one such that a "path" over the loss surface (the loss values over different values of the
+DNN's parameters) exists that is mostly downhill from the
 starting point to the correct answer. Thus the parameters follow the gradient and "descend" into the
 global minima of the loss.
 
@@ -78,6 +79,48 @@ easily trapped in local minima far from a good solution.](figures/bad_to_good_wa
 ![Figure 6. The loss walk for 2 steps with m_factor = 5. As in Figure 3 the loss surface is smoother
 with the additional layers, but it there are still minima where the training progress can become
 stuck. The complexity of the loss surface increases with the increase in steps.](figures/bad_to_good_walk_step2_mfactor5.png)
+
+Each of the lines in Figures 3-6 show a walk from a known high quality solution (as described in the
+[previous post](20230828-LargeDNNsLookGood--TheyMayBeFoolingUs.html)) to the solution found during
+training. Since the loss surface has as many dimensions as there are parameters in the network it
+isn't easy to visualize--but if you're a higher dimensional being you can think about it as a
+multidimensional mountain range. Each of the lines on those figures represents a straight line walk
+from one point to another along the loss surface. The peaks--those areas with extremely high loss--
+separate the loss surface into discrete zones.
+
+Some textbooks may pretend that a complicated route through several valleys will connect any
+starting position, but that isn't true in this case and is very likely untrue in practice. The
+initial starting position, the random initialization of the DNN's weights and biases, will determine
+where training will converge.
+On each figure you can see that several of the lines end up at nearly the same location, so training
+can converge to the same (or nearly the same) solution. The important question is whether or not
+that solution is any good.
+
+Adding more parameters to the DNN smooths out the loss surface and may join some of
+the loss valleys together. Smoothness helps, but it is still possible to get an unlucky
+initialization of a network, which is probably why in practice we always train several networks for
+a task rather than a single one. In academic papers we then report statistics and in industry we
+select the best model for deployment. This is yet another overhead cost of the brute force approach
+of current training techniques.
+
+## Improving Results
+
+A solution to this is unclear, at least to me. Replacing stochastic gradient descent with some
+unknown magic would be nice, but the fact is that no human that I know of can cast spells. I can
+suggest several realistic directions though.
+
+First, we allow DNNs to give us bad answers. Maybe we should stop? When we put a
+[softmax](https://pytorch.org/docs/stable/generated/torch.nn.functional.softmax.html) at the output
+of our classifiers we force those outputs into a correct range, regardless of what nonsense is
+coming out of the last layer of the network (a softmax converts its inputs so that they all sum to
+1, as a probability should). This encourages strange behaviors and promotes "bag of features" type
+responses. Most troubling, there is no possibility for the network to
+output all `0`s when none of input's features correlate with any of the object classes. DNN
+practitioners are well aware that the outputs of a softmax classifier can't be treated as real
+probabilities, so a change in the outputs wouldn't actually cause much disruption.
+
+<!-- mention GANs that generated arms attached to dumbells when the network was just supposed to
+generate the dumbells -->
 
 <!-- TODO Add in some random walks to show how the surface changes in different random directions.  -->
 

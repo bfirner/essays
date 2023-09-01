@@ -47,7 +47,7 @@ cells.
 
 ![Figure 2. Examples where the center cell will stay or become dead.](figures/gol_dead_examples.png)
 
-The dead or alive determination is made for every cell on the board, which can be or arbitrary size,
+The dead or alive determination is made for every cell on the board, which can be of arbitrary size,
 and each one is updated to move on to the next time step. Spaces that are off the edge of the board
 are counted as dead.
 
@@ -210,9 +210,9 @@ philosophy is not sustainable.
 
 Let's look at results when we need to predict more steps.
 
-![Figure 5. Likelihood of complete model success over 1000 tests after training to predict more steps steps in the Game of Life. With a larger number of steps the results don't look so good.](figures/1_depth_gol_results_line.png)
+![Figure 5. Likelihood of complete model success over 1000 tests after training to predict more steps in the Game of Life. With a larger number of steps the results don't look so good.](figures/1_depth_gol_results_line.png)
 
-![Figure 6. The success rates for individual tiles over all of the 20 trained models. A success rate of 0.5 is what we expect if the network is just "guessing".](figures/1_depth_gol_results_line_avg.png)
+![Figure 6. The success rates for individual tiles over all of the 20 trained models. A success rate of 0.5 is what we expect if the network is just "guessing" but has a good estimate of the distributions of `0`s and `1`s in the output.](figures/1_depth_gol_results_line_avg.png)
 
 Looking at figures 5 and 6 we can see that eventually brute forcing the problem won't work any more.
 Now, we haven't tried to make the models deeper, so it is possible that there is a good set of
@@ -220,7 +220,7 @@ hyper-parameters that will blow this problem out of the water. Certainly, the wa
 predictions are stuck at around 50% correct in the higher step problems implies that the DNN
 collapses into a failed state, so careful management of the training could lead to better results.
 
-This problem shouldn't be so difficult though.  We know that the Game of Life has a simple solution
+This problem shouldn't be so difficult though. We know that the Game of Life has a simple solution
 and it is clear that training the DNN to 100% success takes vastly more capacity than is required.
 What if most, or even all, of the problems that we solve with DNNs have the same problem? Would we
 notice?
