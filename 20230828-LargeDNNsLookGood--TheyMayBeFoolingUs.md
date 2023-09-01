@@ -76,6 +76,8 @@ There are two convolution kernels in the first layer to separate the two differe
 * The minimum number of neighbors for a cell to be alive in the next step
 * The minimum number of neighbors for a cell to be dead in the next step from overcrowding
 
+Figure 3a visualizes the network structure.
+
 The weights of the convolutions are `[[0, 1, 0], [1, 0.5, 1], [0, 1, 0]]`.
 
 If we label alive as `1` and dead as `0`, then the output of that filter is:
@@ -177,9 +179,20 @@ command will look like this:
 
 The `--steps` option can be used to add more than 1 step. Let's test with up to three steps.
 
-![Figure 3. Likelihood of complete model success over 1000 tests after training to predict one, two, or three steps in the Game of Life. Some results are quite noisy and would require more than 20 models to get a smooth trend line. If we were training these models "for real," the first time we hit 100% accuracy we would stop.](figures/1_depth_small_steps_gol_results_line.png)
++:-------------------------------------------------------------------------------------:+:------------------------------------------------------------------------------------------------------------------------:+
+|![Figure 3a. Minimal Game of Life model.](figures/minimal_gol_model.png){ width=95% }  |![Figure 3. Updated Game of Life model that makes training more successful.](figures/shmooed_gol_model.png){ width=75% }  |
++---------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------------------+
+|Figure 3a. Minimal Game of Life model.                                                 | Figure 3b. Updated Game of Life model to make training more successful.                                                  |
++------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-![Figure 4. The success rates for individual tiles over all of the 20 trained models. These results can be thought of as the classification accuracy at each tile given the input state, which produces a smoother result than the all-or-nothing success of the model.](figures/1_depth_small_steps_gol_results_line_avg.png)
+A network with multiple steps will replicate the six inner layers of the models in Figure 3. For the
+minimal model those six layers are duplicated and placed one after another. For the update model
+that improves training results, the Sigmoid is only placed at the very end of the network and
+LeakyReLU are used otherwise.
+
+![Figure 4. Likelihood of complete model success over 1000 tests after training to predict one, two, or three steps in the Game of Life. Some results are quite noisy and would require more than 20 models to get a smooth trend line. If we were training these models "for real," the first time we hit 100% accuracy we would stop.](figures/1_depth_small_steps_gol_results_line.png)
+
+![Figure 5. The success rates for individual tiles over all of the 20 trained models. These results can be thought of as the classification accuracy at each tile given the input state, which produces a smoother result than the all-or-nothing success of the model.](figures/1_depth_small_steps_gol_results_line_avg.png)
 
 The results? First of all, training is slower so we need a GPU to speed things up (reducing training
 time by about 80% for me). It's important to notice that I didn't optimize all of the data
@@ -210,11 +223,11 @@ philosophy is not sustainable.
 
 Let's look at results when we need to predict more steps.
 
-![Figure 5. Likelihood of complete model success over 1000 tests after training to predict more steps in the Game of Life. With a larger number of steps the results don't look so good.](figures/1_depth_gol_results_line.png)
+![Figure 6. Likelihood of complete model success over 1000 tests after training to predict more steps in the Game of Life. With a larger number of steps the results don't look so good.](figures/1_depth_gol_results_line.png)
 
-![Figure 6. The success rates for individual tiles over all of the 20 trained models. A success rate of 0.5 is what we expect if the network is just "guessing" but has a good estimate of the distributions of `0`s and `1`s in the output.](figures/1_depth_gol_results_line_avg.png)
+![Figure 7. The success rates for individual tiles over all of the 20 trained models. A success rate of 0.5 is what we expect if the network is just "guessing" but has a good estimate of the distributions of `0`s and `1`s in the output.](figures/1_depth_gol_results_line_avg.png)
 
-Looking at figures 5 and 6 we can see that eventually brute forcing the problem won't work any more.
+Looking at figures 6 and 7 we can see that eventually brute forcing the problem won't work any more.
 Now, we haven't tried to make the models deeper, so it is possible that there is a good set of
 hyper-parameters that will blow this problem out of the water. Certainly, the way that fact that
 predictions are stuck at around 50% correct in the higher step problems implies that the DNN
@@ -227,7 +240,7 @@ notice?
 
 When training these models, the loss goes down and success per tile goes up. If we think of this as a
 classification problem for individual tiles where the classes are "dead" and "alive" the success
-rate per tile is going up nicely (see Figures 3 and 4) even when the model failure rates are high.
+rate per tile is going up nicely (see figures 4 and 5) even when the model failure rates are high.
 In fact, if training a model was too costly we might settle for the best model out of a week's worth
 of training, even if the best model was perfect.
 
