@@ -78,23 +78,22 @@ easily trapped in local minima far from a good solution.](figures/bad_to_good_wa
 
 ![Figure 6. The loss walk for 2 steps with m_factor = 5. As in Figure 3 the loss surface is smoother
 with the additional layers, but it there are still minima where the training progress can become
-stuck. The complexity of the loss surface increases with the increase in steps.](figures/bad_to_good_walk_step2_mfactor5.png)
+stuck. The complexity of the loss surface increases with the number of steps.](figures/bad_to_good_walk_step2_mfactor5.png)
 
 Each of the lines in Figures 3-6 show a walk from a known high quality solution (as described in the
 [previous post](20230828-LargeDNNsLookGood--TheyMayBeFoolingUs.html)) to the solution found during
-training. Since the loss surface has as many dimensions as there are parameters in the network it
-isn't easy to visualize--but if you're a higher dimensional being you can think about it as a
-multidimensional mountain range. Each of the lines on those figures represents a straight line walk
+training. Since the loss surface has as many dimensions as there are parameters in the network, it
+isn't easy to visualize--but if you're a higher dimensional being you can think about it as an
+n-dimensional mountain range. Each of the lines on those figures represents a straight line walk
 from one point to another along the loss surface. The peaks--those areas with extremely high loss--
 separate the loss surface into discrete zones.
 
 Some textbooks may pretend that a complicated route through several valleys will connect any
-starting position, but that isn't true in this case and is very likely untrue in practice. The
-initial starting position, the random initialization of the DNN's weights and biases, will determine
-where training will converge.
-On each figure you can see that several of the lines end up at nearly the same location, so training
-can converge to the same (or nearly the same) solution. The important question is whether or not
-that solution is any good.
+starting position to similar local minima, but that isn't true in this case and is very likely
+untrue in practice. The initial starting position, the random initialization of the DNN's weights
+and biases, will determine where training will converge. On each figure you can see that several of
+the lines end up at nearly the same location, so training can converge to the same (or nearly the
+same) solution. The important question is whether or not that solution is any good.
 
 Adding more parameters to the DNN smooths out the loss surface and may join some of
 the loss valleys together. Smoothness helps, but it is still possible to get an unlucky
@@ -103,21 +102,48 @@ a task rather than a single one. In academic papers we then report statistics an
 select the best model for deployment. This is yet another overhead cost of the brute force approach
 of current training techniques.
 
-## Improving Results
+## Unknown Magic
 
-A solution to this is unclear, at least to me. Replacing stochastic gradient descent with some
-unknown magic would be nice, but the fact is that no human that I know of can cast spells. I can
-suggest several realistic directions though.
+A general solution to this is unclear, at least to me. Replacing stochastic gradient descent with
+some unknown magic would be nice, but the fact is that no human that I know of is anything more than
+a metaphorical wizard. It is possible that changing the problem space would improve the loss
+surface, so one possibility would be to change the way that we use DNNs for predictions.
 
-First, we allow DNNs to give us bad answers. Maybe we should stop? When we put a
+For example, instead of making a DNN that distinguishes between multiple different classes we could
+train a DNN that detects the various qualities of an object: is it metal, does it have wings, is it
+currently flying, etc. Individual qualities can be used to distinguish between object classes while
+being more straightforward to label and train. DNNs could also be trained to output trees that
+capture the relationship between classes, which would better capture relationships between them and
+could allow for the DNN to express confidence up to a point--this also requires more work when
+creating labels though.
+
+Another thing to think about is that we allow DNNs to give us meaningless answers because of the way
+that we train them. Maybe we should stop? When we put a
 [softmax](https://pytorch.org/docs/stable/generated/torch.nn.functional.softmax.html) at the output
-of our classifiers we force those outputs into a correct range, regardless of what nonsense is
-coming out of the last layer of the network (a softmax converts its inputs so that they all sum to
-1, as a probability should). This encourages strange behaviors and promotes "bag of features" type
-responses. Most troubling, there is no possibility for the network to
-output all `0`s when none of input's features correlate with any of the object classes. DNN
-practitioners are well aware that the outputs of a softmax classifier can't be treated as real
-probabilities, so a change in the outputs wouldn't actually cause much disruption.
+of our classifiers, we force those outputs into a range that looks correct, regardless of what
+nonsense is coming out of the last layer of the network, effectively hiding the state of the
+network outputs.
+
+For example, a softmax converts its inputs so that they all sum to 1, as a probability should, even
+though the outputs aren't really probabilities. These DNNs will rapidly learn any local features
+that are highly correlated with particular object classes since those gradients are likely present
+through the loss surface. This can lead to trained DNN's with outputs that depend upon local
+textures rather than a discrete set of features that uniquely define an object of a particular
+class, which in turn makes those DNNs vulnerable to adversarial attacks or to unexpected failures.
+
+Most troubling, many trained DNNs do not allow for the network to output low confidence for all
+object classes. If the responses of the different convolution filters in the network are weak then
+the output of the softmax becomes quite noisy. This happens at training time as well as during
+inference, meaning that we are training on noise as if it were meaningful.
+
+DNN practitioners are well aware that the outputs of a softmax classifier can't be treated as real
+probabilities, so a change in the outputs of DNN classifiers wouldn't actually cause much disruption
+to their users.
+
+I will do my best to keep the complicated nature of loss surface in mind as I train neural networks,
+and I think it best that any other user of DNNs does the same. Just because the loss goes down
+during training doesn't mean that the place where we end up is any good. Even when results seem to
+be "good enough," that is no excuse to avoid looking for a better result.
 
 <!-- mention GANs that generated arms attached to dumbells when the network was just supposed to
 generate the dumbells -->
@@ -128,10 +154,13 @@ generate the dumbells -->
 
 <!-- talk about minima, global and local -->
 
-<!-- itroduce the idea of a walk -->
-
-<!-- plot some walks -->
-
 <!-- try to initialize the middle of the network to the correct state, see what happens -->
 
 <!-- probably need to present results for 10 or 20 steps. May need to add those to previous post too -->
+
+<!-- create a new loss metric that produces smooth walks. This is the stuff in
+create_subproblem_model.py -->
+
+<!-- is it worth taking some time to talk about the projections actually being done to solve this
+problem? If the solution has something to do with the complexity of the deformation of the input
+space then maybe -->

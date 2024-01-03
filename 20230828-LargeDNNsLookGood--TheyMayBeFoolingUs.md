@@ -73,6 +73,7 @@ The network defined in PyTorch looks something like this[^1]:
     )
 
 There are two convolution kernels in the first layer to separate the two different thresholds:
+
 * The minimum number of neighbors for a cell to be alive in the next step
 * The minimum number of neighbors for a cell to be dead in the next step from overcrowding
 
@@ -127,7 +128,8 @@ If we attempt to train that network as-is it will very likely fail. In fact, I t
 model with randomized weights several times with different seeds for the random number generators
 and I didn't end up with any trained networks that were always correct. That's not unexpected.
 
-First, using the code from my [github page](https://github.com/bfirner/dnn_game_of_life) we can
+Let's run some experiments.
+First, using the code from my [github page](https://github.com/bfirner/dnn_game_of_life), we can
 train a network like this:
 
     python3 gameoflife.py
@@ -258,14 +260,16 @@ training examples and do a better job. In the end, we use gigantic networks to s
 because we don't know how to make DNN training work with small models and don't have a good way to
 tell that the model had gotten stuck in a bad state.
 
-In many cases the bad states--the local minima where the DNN parameters have settled--seem to give
-"good" results. However, when we try to apply deep learning to safety critical or high reliability
-use-cases we will realize that 99.5% accuracy at a task is woefully inadequate. Solving this problem
-will be critical to creating highly reliable systems with deep neural networks.
+In many cases the bad states -- the local minima where the DNN parameters have settled -- seem to
+give "good" results. However, when we try to apply deep learning to safety critical or high
+reliability use-cases we will realize that 99.5% accuracy at a task is woefully inadequate. Solving
+this problem will be critical to creating highly reliable systems with deep neural networks.
 
 I'll write a follow-up to this post where we can dig into what, exactly is going wrong during
 training. Even if you don't believe that the Game of Life is similar to other problems,
 understanding how SGD can fail us is still an interesting topic.
+
+(The [follow-up](20230829-LargeDNNsAndBadLocalMinima.html) is up)
 
 
 [^1]: All code used in this analysis is on my [github page](https://github.com/bfirner/dnn_game_of_life).
