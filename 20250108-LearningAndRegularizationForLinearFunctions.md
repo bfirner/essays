@@ -9,7 +9,7 @@ This post will cover using small networks to approximate linear functions, but I
 
 First, let's review the problem from Fleuret's book.
 Our task is to model a function that is a linear combination of other functions.
-More formally, $f(x) = \Sigma^K_{k=1}(w_{k}f_{k}(x)$, where $w_k$ is the weight of the $k^{th}$ basis function.
+More formally, $f(x) = \Sigma^K_{k=1}(w_{k}f_{k}(x))$, where $w_k$ is the weight of the $k^{th}$ basis function.
 Less formally, here is a picture:
 
 ![Figure 1. A function from multiple basis functions.](figures/2025-01-function-from-basis-functions.png)
@@ -73,12 +73,12 @@ output = net.forward(x_inputs)
 
 The result of training is in Figure 2.
 
-![Figure 2. Is the model train on the ranges \[-2.5,1\] and \[1,2.5\] overfit?]("../figures/2025-01-function-from-x.png")
+![Figure 2. Is the model train on the ranges \[-2.5,1\] and \[1,2.5\] overfit?](figures/2025-01-function-from-x.png)
 
 Can we say that the model is overfit? Well...
 
 Certainly the error is higher where it wasn't trained, which was 40% of the data range.
-The fact that it's a bit wrong there isn't surprising, but I wouldn't call this an "overfit" issue, because the existing data isn't "pushing" the model to be worse in the unknown region. This is just an issue of lack of data[^Take note that you can run training repeatedly to get different results that look better or worse, depending upon the randomness of the training points and the randomness involved in model initialization and training. The point is that the failure is arbitrary.].
+The fact that it's a bit wrong there isn't surprising, but I wouldn't call this an "overfit" issue, because the existing data isn't "pushing" the model to be worse in the unknown region. This is just an issue of lack of data^[Take note that you can run training repeatedly to get different results that look better or worse, depending upon the randomness of the training points and the randomness involved in model initialization and training. The point is that the failure is arbitrary.].
 
 It would take very little data to solve this. Let's just add a single training point in the range \[-0.1,0.1\].
 
@@ -87,7 +87,7 @@ It would take very little data to solve this. Let's just add a single training p
 xs = sorted([-2.5 + 1.5*random.random() for _ in range(30)] + [-0.1 + 0.2*random.random() for _ in range(1)] + [1 + 1.5*random.random() for _ in range(30)])
 ```
 
-![Figure 3. The model is trained on the ranges \[-2.5,1\], \[-0.1,0.1\], and \[1,2.5\]]("../figures/")
+![Figure 3. The model is trained on the ranges \[-2.5,1\], \[-0.1,0.1\], and \[1,2.5\]](figures/2025-01-function-from-x-better.png)
 
 From Figure 3 we can see that just a tiny bit of data will fix our issue.
 If we truly had an "overfitting" issue, that would imply that the training data contradicts what was in the untrained area, but in fact the data ranges are copacetic.
@@ -160,7 +160,7 @@ With some clever use of the abs and copysign functions to keep the code terse, t
 We end up with a decent fit, as seen in Figure 4.
 It's wrong where we lacked data, but that is no fault of the approach.
 
-![Figure 4. A model with a human-set piecewise fit to 9 points.]("../figures/2025-01-function-from-x-human.png")
+![Figure 4. A model with a human-set piecewise fit to 9 points.](figures/2025-01-function-from-x-human.png)
 
 Now, what would happen if we didn't use all of the weight and bias values?
 Let's add two more:
@@ -185,7 +185,7 @@ Let's add two more:
         net[2].weight[0,5] = math.copysign(1, new_delta)
 ```
 
-![Figure 5. A model where we added some uneccessary weights.]("../figures/2025-01-function-from-x-human-bad.png")
+![Figure 5. A model where we added some uneccessary weights.](figures/2025-01-function-from-x-human-bad.png)
 
 Will gradient descent fix this?
 
@@ -200,7 +200,7 @@ Will gradient descent fix this?
 The answer is no^[I got a loss of 2.7000623958883807e-13 (thanks floating point arithmetic!) which is basically 0.].
 The real solution is regularization.
 The mechanics of how a regularizing function can fix this are complicated, depending upon the function.
-For the simplest case, consider assigning a penalty to all weights (the "weight_decay" option in torch.optim.SGD.
+For the simplest case, consider assigning a penalty to all weights (the "weight_decay" option in torch.optim.SGD).
 Those weights do not cause any loss, but changing them will not increase loss either.
 A weight decay will slowly drive them to 0, with the weight of the fifth neuron changing back to its value before we added them into the network.
 
