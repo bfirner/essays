@@ -8,7 +8,7 @@ import math
 import random
 import torch
 
-parser = argparse.ArgumentParser(description='Tool for labeling data.')
+parser = argparse.ArgumentParser(description='Some experiments with normalization.')
 
 parser.add_argument(
     '--test',
