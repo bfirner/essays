@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <title>Ben's Research</title>
+        <!-- Twitter Bootstrap css -->
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="benstyle.css" rel="stylesheet" type="text/css" media="screen" />
+    </head>
+    <body>
+        <ul class ="nav nav-pills">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="projects.html" class="nav-link active">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a href="research.html" class="nav-link">Research</a>
+          </li>
+          <li class="nav-item">
+            <a href="weblog" class="nav-link">Blog</a>
+          </li>
+        </ul>
+        <div class="container">
+          <h2>Github</h2>
+          <p>
+          See my <a href="https://github.com/bfirner">github</a> different active and (sadly) defunct code that I've worked on.
+          I am actively working on some <a href="https://github.com/bfirner/bee_analysis">machine learning code</a>, which encapsulates some of the techniques that I've learned. The code is in active development, as is the documentation, so buyer beware.
+          </p>
+          <h2>Autonomous Vehicles</h2>
+          <p>
+          From 2015 until 2023 I worked on autonomous vehicles at NVIDIA. I was the first hire on a team whose mission was to validate end-to-end learning for the AV task. We were successful, moving from "research" and into "production" in under two years.
+          We held a live demo open to public walk-ins during CES 2017, less than 2 years into the project
+          It was covered by various media, such as <a href="https://youtu.be/FABftuXUOxE">The Verge</a> and <a href="https://youtu.be/X0StWzE5hT8">TechCrunch</a>.
+          <div class="span1">
+            <img src="ces_demo.jpg" width="320" alt="The NVIDIA self-driving car alongside its counterpart from Audi during CES 2017." />
+          </div>
+          <p/>
+          <p>
+          Within five years, we achieved distances of around 500km between failures along United States highways, driving in all weather and lighting conditions: night, day, rain, and snow.
+          We also covered multiple states along the East Coast in single test drives.
+          A video with clips of a multi-state drive is on the <a href="https://developer.nvidia.com/blog/researching-and-developing-an-autonomous-vehicle-lane-following-system/">NVIDIA blog: "Researching and Developing an Autonomous Vehicle Lane-Following System"</a>.
+          <br/>
+          We published a pair of interesting arxiv papers as well.
+          <br/>
+          <a href="https://arxiv.org/abs/1604.07316">End to End Learning for Self-Driving Cars</a> in 2016
+          <br/>
+          <a href="https://arxiv.org/abs/1704.07911">Explaining How a Deep Neural Network Trained with End-to-End Learning Steers a Car</a> in 2017
+          </p>
+          <h2>Autonomous Drones</h2>
+          <p>
+          In 2024, I worked with a small startup on autonomous drones.
+          I created the data collection, labelling, and training pipelines, and we were able to demonstrate real-time autonomy using only a Raspberry Pi Zero for on-board comput and a Picam sensor as input.
+          <div class="span1">
+            <img src="balloon_hit_fpv.webp" alt="A first person view of a drone intercepting a balloon." />
+          </div>
+          </p>
+          <!--
+          <h1>Code Snippets</h1>
+          <p>
+          I have a few code project that predate my github account. I plan to put these on github at some point, but until then they will hang out on this page.
+          <br/>
+          These are some coding projects that I've done that might be useful to
+          others. The source code is well commented so it should be self-explanatory.
+          My blog should usually have additional information on the code here.
+          This source code is offered without any warantees or
+          guarantees of fitness but you are welcome to use it in any project
+          so long as you follow the license (zlib) that appears in each file.
+
+          </p>
+
+          <ul type="square">
+            <li><a href="#simple_lua">Simplified lua calls from C++ to lua.</a></li>
+            <li><a href="#netbuffer">Conversion to and from big endian character
+              arrays. Meant to simplify internet data transfer.</a></li>
+            <li><a href="#cross_entropy">Simplified application of the cross entropy method.</a></li>
+          </ul>
+
+          <h4 id="simple_lua">Simplified lua calls from C++ to lua.</h4>
+          <p>
+          This is just a single hpp and cpp file that uses C++0x variadic templates
+          to greatly simplify calling lua functions and getting return values
+          from them.
+          <br/>
+          A gzipped tar file is <a href="code_projects/simple_lua.tgz">here</a>.
+          </p>
+
+          <h4 id="netbuffer">Conversion to and from network data.</h4>
+          <p>
+          Templated functions to convert data to and from network endian and
+          add it into or remove it from a buffer. There is a class to simplify
+          reading primitives and containers from a character buffer and functions
+          to simplify adding primitives and containers into a buffer.
+          <br/>
+          A gzipped tar file is <a href="code_projects/netbuffer.tgz">here</a>.
+          </p>
+
+          <h4 id="cross_entropy">Code that simplifies cross entropy optimization.</h4>
+          <p>
+          The cross entropy method is a way to optimize parameters or to find the
+          solution to an optimization problem. Here I've encapsulated the
+          cross entropy approach into a single function call.
+          I also posted an article explaining cross entropy and how to use this
+          software <a href="weblog/article/the-cross-entropy-method">here</a>.
+          <br/>
+          A gzipped tar file is <a href="code_projects/cross_entropy.tgz">here</a>.
+          </p>
+          -->
+
+        </div>
+    </body>
+</html>

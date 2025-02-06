@@ -1,0 +1,76 @@
+html, body {
+    margin: .05cm;
+    padding: 0;
+}
+
+h1, h2, h3, h4 {
+	FONT-WEIGHT: normal;
+    COLOR: #222222;
+    FONT-FAMILY: Georgia, Geneva, Arial, Helvetica, serif;
+}
+
+p {
+	FONT-SIZE: .44cm;
+    COLOR: #000000;
+    LINE-HEIGHT: .415cm;
+    FONT-FAMILY: Georgia, Geneva, Arial, Helvetica, serif;
+    text-indent: 0.5cm;
+    padding-left: .1cm;
+    padding-right: .1cm;
+    padding-top: .05cm;
+    padding-bottom: .05cm;
+    margin-left: 0;
+    margin-right: 0;
+    border-width-left: 0;
+    border-width-right: 0;
+    min-width: 470px;
+    max-width: 800px;
+}
+
+p.smaller {
+    FONT-SIZE: .3cm;
+}
+
+.generic {
+    min-width: 470px;
+    max-width: 800px;
+}
+
+/*Clickable menu tabs.*/
+a.selected {
+    font-weight: bold
+}
+
+a.menu {
+    text-align: center;
+    border: black solid thin;
+    padding-right: 0.4cm;
+    padding-left: 0.4cm;
+    display: block;
+}
+
+a.menu:link {
+    color: blue;
+    background: #DDDDDD;
+}
+
+a.menu:visited {
+    color: blue;
+    background: #DDDDDD;
+}
+
+a.menu:hover {
+    color: blue;
+    background: #AAAAAA;
+}
+
+a.menu:active {
+    color: blue;
+    background: #BBBBBB;
+}
+
+.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <title>Ben's Research</title>
+        <!-- Twitter Bootstrap css -->
+        <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" media="screen" />
+        <link href="benstyle.css" rel="stylesheet" type="text/css" media="screen" />
+    </head>
+    <body>
+        <ul class ="nav nav-pills">
+          <li class="nav-item">
+            <a href="index.html" class="nav-link">Home</a>
+          </li>
+          <li class="nav-item">
+            <a href="projects.html" class="nav-link">Projects</a>
+          </li>
+          <li class="nav-item">
+            <a href="research.html" class="nav-link active">Research</a>
+          </li>
+          <li class="nav-item">
+            <a href="weblog" class="nav-link">Blog</a>
+          </li>
+        </ul>
+        <div class="container">
+          <h1>Ben Firner's Research</h1>
+          <div class="row">
+            <div class="span4">
+              <h2>Owl Platform (Circa 2018)</h2>
+              <div class="span1">
+                <img src="owl_pip3.png" alt="Owl Platform Icon" />
+              </div>
+              With all of the hype about the "Internet of Things" it would be nice if you could put your things online. This is a long-term project with another student Rutgers (<a href="http://paul.rutgers.edu/~romoore/">Robert Moore</a>) with the goal of creating a software stack that makes it easy to make physical spaces, like your house, smarter. This problem can be divided into several areas: sensing, data collection, data processing, and actuation on that data. Owl platform focuses on the last three areas, and is hardware agnostic, allowing you to choose your own sensing solution. Interested? <a href="http://www.owlplatform.com">Check it out!</a>
+            </div>
+            <div class="span8">
+              <h2>Transmit Only (2014 PhD Thesis)</h2>
+              Changing batteries in your devices is annoying; changing batteries in 100 sensors throughout your home is impossible. Traditional wireless protocols care more about data connectivity than power consumption, but if we want a world with tiny sensors then our wireless protocols need to use tiny batteries and still last for years. My solution to this problem is a transmit-only protocols that exploits the capture effect to mitigate packet collisions. This is a zero-overhead protocol for the transmitters, so our sensors last for years on a single coin cell battery. Read more about it in my <a href="bfirner-thesis.pdf">thesis</a>.<br/>
+              <img src="capture_example.png" alt="Illustration of capture regions" />
+            </div>
+          </div>
+
+
+          <div class="row">
+            <div class="span6">
+              <h3>Published Work</h3>
+              <u><h4>Improving RF-Based Device-Free Passive Localization in Cluttered Indoor Environments Through Probabilistic Classification Methods</h4></u>
+              <p>
+              Xu, C.; Firner, B.; Zhang, Y.; Howard, R.; Li, J.; Lin, X.;<br/>
+              IPSN'12, pp209-220.<br/>
+              My labmate, Chenren Xu, does location estimation using the radio links from the sensing system we deployed in the lab. This is the same system that is tracking when coffee is brewed, so reusing the radio links for other purposes is pretty cool!<br/>
+
+              <u><h4>Multiple Receiver Strategies for Minimizing Packet Loss in Dense Sensor Networks</h4></u>
+              <p>
+              Firner, B.; Xu, C.; Howard, R; Zhang, Y.;<br/>
+              MobiHoc'10, pp211-220, September 20-24, 2010.<br/>
+              URLs: <a href="hoc23o-firner.pdf">Paper</a> and
+              <a href="ScalabilityPresentation.pdf">Slides</a><br/>
+              This is preliminary work on the effectiveness of the capture effect. Future papers will have more complete comparisons with other protocols.<br/>
+              The data for the 100 transmitter trial is <a href="100txtrial_data.tar.gz">here</a>. This
+              84 megabyte file will expand to over a gigabyte so be careful. There is a README in the
+              archive. The collision phases data is available <a href="collision_phases_data.tar.gz">here</a>.
+              If you use this data in a publication please cite the paper.<br/>
+
+              </p>
+              <u><h4>Detecting Intra-Room Mobility with Signal Strength Descriptors</h4></u>
+              <p>
+              Konstantinos, K.; Firner, B.; Howard, R.; Zhang, Y.; Martin, R.;<br/>
+              MobiHoc, 2010.<br/>
+              URLs: <a href="Kosta_Firner_MobilityDetection.pdf">Paper</a> and 
+              <a href="MobilityDetectionPresentation.pdf">Slides</a><br/>
+              I did half of the writing and all of the classification for this paper, using <a href="http://www.cs.waikato.ac.nz/ml/weka/">Weka</a> and a lot of shell scripts.<br/>
+              Some of the mobility traces are also available online <a href="http://grail.rutgers.edu/mobilitytraces/">here</a>. Contact me for a full trace (it's not all online due to its size).
+
+              </p>
+              <u><h4>Towards Continuous Asset Tracking: Low-Power Communication and Fail-Safe
+                  Presence Assurance</h4></u>
+              <p>
+              Firner, B.; Jadhav, P.; Zhang, Y.; Howard, R.; Trappe, W.; Fenson, E.<br/>
+              Sensor, Mesh and Ad Hoc Communications and Networks, 2009. SECON '09. 6th Annual IEEE Communications Society Conference on , vol., no., pp.1-9, 22-26 June 2009<br/>
+              URL: <a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5168979&isnumber=5168895">IEEEXplore link</a> and <a href="Firner_Secon09.pdf">paper</a>
+              </p>
+              <h4>Demo abstract: Towards Continuous Tracking: Low-power Communication and Fail-Safe Presence Assurance</h4>
+              <p>
+              Firner, B.; Jadhav, P.; Zhang, Y.; Howard, R.; Trappe, W.<br/>
+              Information Processing in Sensor Networks, 2009. IPSN 2009. International Conference on , vol., no., pp.417-418, 13-16 April 2009
+              URL: <a href="http://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=5211887&isnumber=5211879">IEEEXplore link</a>
+              </p>
+              <u><h4>PIP Tags: Hardware Design and Power Optimization</h4></u>
+              <p>
+              Firner, B.; Shweta, M.; Zhang, Y.; Howard, R.; Trappe, W.; Wolniansky, P.; Fenson, E<br/>
+              The Fifth Workshop on Embedded Networked Sensors, HotEmNetS 2008. 2 June 2008
+              URL: <a href="RollCall_HotEmNets08.pdf">Paper</a>
+              </p>
+            </div>
+          </div>
+        </div>
+    </body>
+</html>
