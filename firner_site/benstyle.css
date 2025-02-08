@@ -1,39 +1,37 @@
-html, body {
-    margin: .05cm;
-    padding: 0;
+html {
+  line-height: 1.2;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #1a1a1a;
+  background-color: #fdfdfd;
 }
-
-h1, h2, h3, h4 {
-	FONT-WEIGHT: normal;
-    COLOR: #222222;
-    FONT-FAMILY: Georgia, Geneva, Arial, Helvetica, serif;
+body {
+  margin: 0 auto;
+  padding-left: 0.1cm;
+  padding-right: 0.1cm;
+  padding-top: 0.1cm;
+  padding-bottom: 0.1cm;
+  hyphens: auto;
+  overflow-wrap: break-word;
+  text-rendering: optimizeLegibility;
+  font-kerning: normal;
+  min-width: 600px;
+  max-width: 800px;
+  text-indent: 0.5cm;
 }
-
-p {
-	FONT-SIZE: .44cm;
-    COLOR: #000000;
-    LINE-HEIGHT: .415cm;
-    FONT-FAMILY: Georgia, Geneva, Arial, Helvetica, serif;
-    text-indent: 0.5cm;
-    padding-left: .1cm;
-    padding-right: .1cm;
-    padding-top: .05cm;
-    padding-bottom: .05cm;
-    margin-left: 0;
-    margin-right: 0;
-    border-width-left: 0;
-    border-width-right: 0;
-    min-width: 470px;
-    max-width: 800px;
+div.footer {
+  font-size: 12px;
+  color: #3a3a3a;
 }
-
-p.smaller {
-    FONT-SIZE: .3cm;
+@media (max-width: 800px) {
+  body {
+    font-size: 0.9em;
+    padding: 1em;
+  }
 }
-
-.generic {
-    min-width: 470px;
-    max-width: 800px;
+img {
+    padding-right: 10px;
+    padding-left: 10px;
 }
 
 /*Clickable menu tabs.*/
