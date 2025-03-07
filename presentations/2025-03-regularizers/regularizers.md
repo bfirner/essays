@@ -277,6 +277,10 @@ loss_fn = torch.nn.MSELoss(reduction='sum')
     optimizer.step()
 ```
 
+-v-
+
+## Surprisingly Robust
+
 <!-- TODO FIXME: Transition slide back to the main topic -->
 
 ---
@@ -346,9 +350,9 @@ Magic!
 * Short answer: *Gradient Descent* is *magic*
   * Longer answer is that success will vary:
     * with the kind of noise
-    * with the problem
+    * with the task
   * Here, the local minima resists moving into a tortured function
-    * Local minima: fancy way to describe where the NN parameters get "stuck"
+    * Local minima: where the NN parameters get "stuck"
     * The output is a piecewise linear fit with 1000 pieces, which is naturally smooth
 <!-- Make a drop down slide to illustrate that mechanic -->
 * Despite this success, regularizers are *vital* for deep learning
@@ -375,11 +379,11 @@ Magic!
 
 ###(DNNs)
 
-* Modern groups *do not* try to use smaller models
-  * Instead, we attempt to use the largest model possible
+* Practitioners *do not* try to use smaller models
+  * Instead, we (generally) use the largest model feasible
 * Why?
   * Unexpectedly, larger models generalize better than smaller models
-* This does not mean that DNNs are *immune* to issues
+* This does not mean that DNNs are *immune* to over fitting issues
 \
 \
 \
@@ -388,7 +392,7 @@ Further reading: [The Loss Surfaces of Multilayer Networks](https://arxiv.org/ab
 
 ---
 
-## Common Techniques
+## Common Regularization Techniques
 
 * L1 or L2 penalties
   * These penalize the network for having non-zero parameters
@@ -396,6 +400,7 @@ Further reading: [The Loss Surfaces of Multilayer Networks](https://arxiv.org/ab
   * Portions of network layers are randomly ignored during training
 * Stochastic Depth
   * Entire layers of the network are randomly ignored during training
+*Label Smoothing
 * Changing the learning target
   * For example, predict matrix transform parameters rather than pixel differences
   * Train large network on big datasets and use conditioning input to restrict output domains
@@ -494,7 +499,7 @@ This verifies that we have a solution.
 
 ## L2 Penalty: Motivations
 
-The solution is at a minima because the loss approaches 0.
+The solution is at a minima, meaning the loss approaches 0.
 
 ```python []
 # To check for errors:
@@ -582,7 +587,7 @@ Final loss is 3.597122599785507e-14
 
 ## The Solution: L2 Penalty
 
-* Add the square of each weight in the network
+* Add the square of each weight in the network to the loss
 * Formally:
   * $\sum^k_{i=1} w_{i}^2$
 * The loss is the derivative of that:
@@ -597,7 +602,7 @@ Final loss is 3.597122599785507e-14
   * We'll arbitrarily choose $\alpha = 0.08$
   * Note: technically, PyTorch's version is only $1/2$ L2
   * Makes little difference unless you are trying to exactly replicate something
-* [Source, for the curious.](https://github.com/pytorch/pytorch/blob/main/torch/optim/sgd.py)
+* [Source code, for the curious.](https://github.com/pytorch/pytorch/blob/main/torch/optim/sgd.py)
 
 ```python
 optimizer = torch.optim.SGD(net.parameters(), lr=0.004, momentum=0.05, weight_decay=0.08)
