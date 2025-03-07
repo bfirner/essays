@@ -11,7 +11,7 @@ index:
     #theme: example-index-theme.css
 
     # Title of the generated index page: string
-    title: Regularizers in Neural Networks
+    title: Regularizers in Deep Neural Networks
 
 # Configuration for the slides
 slides:
@@ -40,7 +40,7 @@ slides:
 
     # Separator to determine end current/begin new vertical slide: regexp
     # (see https://revealjs.com/markdown/#external-markdown)
-    #separator_vertical: ^\s*-v-\s*$
+    separator_vertical: ^\s*-v-\s*$
 
     # Separator to determine end current/begin new slide: regexp
     # (see https://revealjs.com/markdown/#external-markdown)
