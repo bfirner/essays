@@ -97,7 +97,7 @@ for idx, point in enumerate(zip(x_samples, y_samples)):
 
 ## Adding Noise
 
-```python []
+```python [|1,2|7|]
 noise_generator = numpy.random.default_rng()
 noise = numpy.random.standard_normal(len(y_samples)) * 0.05
 
