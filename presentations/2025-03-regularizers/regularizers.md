@@ -38,13 +38,34 @@ Bernhard Firner
 
 ---
 
+## What is Overfitting
+
+* A model can be fantastic on its training data and terrible elsewhere
+* This failure to generalize is called overfitting
+* Blamed on a model with too many parameters fitting both a signal and noise
+
+![](./figures/Overfitting.svg)\
+<sub style="font-size: 0.6em">By Chabacano - Own work, CC BY-SA 4.0, https://commons.wikimedia.org/w/index.php?curid=3610704</sub>
+
+---
+
+## Regularization in Neural Networks
+
+* Reuse some techniques from other statistical models
+  * Often necessary, but often insufficient
+* Neural networks are used in new tasks, so new regularizers were invented
+
+But let's begin with something traditional.
+
+---
+
 ## Least Squares Overfitting
 
-```python []
+```python [|9,14|]
 import numpy
 
 def sample_curve(offset, spread, magnitude, x):
-    """Produce a curve that looks like the overfitting example in "The Little Book of Deep Learning" by François Fleuret."""
+    """Produce a curve."""
     return magnitude * 2**(-(x - offset)**2/spread)
 
 
@@ -352,7 +373,8 @@ Magic!
     * with the kind of noise
     * with the task
   * Here, the local minima resists moving into a tortured function
-    * Local minima: where the NN parameters get "stuck"
+    * Local minima is where the NN parameters get "stuck"
+    * Non-optimal solution, but often simpler
     * The output is a piecewise linear fit with 1000 pieces, which is naturally smooth
 <!-- Make a drop down slide to illustrate that mechanic -->
 * Despite this success, regularizers are *vital* for deep learning
@@ -377,13 +399,13 @@ Magic!
 
 ## Deep Neural Networks
 
-###(DNNs)
+### (DNNs)
 
 * Practitioners *do not* try to use smaller models
   * Instead, we (generally) use the largest model feasible
 * Why?
   * Unexpectedly, larger models generalize better than smaller models
-* This does not mean that DNNs are *immune* to over fitting issues
+* Don't think this means that DNNs are *immune* to overfitting issues
 \
 \
 \
@@ -400,7 +422,7 @@ Further reading: [The Loss Surfaces of Multilayer Networks](https://arxiv.org/ab
   * Portions of network layers are randomly ignored during training
 * Stochastic Depth
   * Entire layers of the network are randomly ignored during training
-*Label Smoothing
+* Label Smoothing
 * Changing the learning target
   * For example, predict matrix transform parameters rather than pixel differences
   * Train large network on big datasets and use conditioning input to restrict output domains
@@ -409,9 +431,31 @@ Further reading: [The Loss Surfaces of Multilayer Networks](https://arxiv.org/ab
 
 ## L2 Penalty: Motivations
 
+L2 penalties simplify the output outside of our training range
+
+![](./figures/dnn-with-noise-outrange.png)
+
+The previous model was trained without an L2 penalty.
+
+---
+
+## L2 Penalty Results
+
+Results are improved outside of the training domain.
+
+![](./figures/dnn-with-noise-outrange-l2.png)
+
+The L2 penalty has more utility than this.
+
+<!-- TODO FIXME Add in a histogram of the weights with and without L2 -->
+
+---
+
+## L2 Penalty: Motivations Continued
+
 Let's revisit curve fitting
 
-This time we'll start with presolved parameters
+We'll start with pre-solved parameters to demonstrate the worst-case
 
 ```python []
 import math
@@ -517,7 +561,7 @@ Loss is 1.1013412404281553e-13
 
 ## L2 Continued: With Errors
 
-We can make the network worse with the same loss:
+We can make the network worse without changing the loss:
 
 ```python
 # Larger model so we can insert errors
@@ -551,7 +595,7 @@ net = torch.nn.Sequential(
 
 ## Will Gradient Descent Fix It?
 
-No.
+No. The loss is fantastic.
 
 ```python []
 net.train()
@@ -579,13 +623,13 @@ Final loss is 3.597122599785507e-14
 
 ---
 
-## The Error
+## The Error Persists
 
 ![](./figures/dnn-manual-fit-errors.png)
 
 ---
 
-## The Solution: L2 Penalty
+## The L2 Penalty
 
 * Add the square of each weight in the network to the loss
 * Formally:
@@ -598,11 +642,16 @@ Final loss is 3.597122599785507e-14
 
 ## Adding L2 to Our Loss
 
+* Conceptually, just add the sum of the parameters to the loss
+  * Logistically, PyTorch's optimizer does other things with the loss value
+  * Momentum works on the loss value, for example.
 * Pass $\alpha$ to the `weight_decay` option in PyTorch's SGD optimizer
   * We'll arbitrarily choose $\alpha = 0.08$
+<!--
   * Note: technically, PyTorch's version is only $1/2$ L2
   * Makes little difference unless you are trying to exactly replicate something
 * [Source code, for the curious.](https://github.com/pytorch/pytorch/blob/main/torch/optim/sgd.py)
+-->
 
 ```python
 optimizer = torch.optim.SGD(net.parameters(), lr=0.004, momentum=0.05, weight_decay=0.08)
@@ -624,6 +673,11 @@ Tuning could make it better.
 ---
 
 ## Dropout
+
+* Different benefits have been ascribed to [Dropout](https://arxiv.org/abs/1207.0580)
+  * Prevent "co-adaptation" of features
+  * Create a superposition of smaller DNNs within a larger DNN
+    * Comes with the same advantages of a random forest
 
 <!-- for dropout, show example with incorrect correlation -- different kind of noise -->
 <!-- Dropout works similarly to old genetic algorithms, with new networks "created" by dropping out portions of the entire pool of parameters. If a set of parameters is very highly correlated with the answer, those parameters "take over" the network. If a dropout creation is missing them, but all of the other weights are built around them, that pushes more weights to mimic the same features. Inefficient globally, but locally good. -->
