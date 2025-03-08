@@ -5,14 +5,14 @@
 import math
 import torch
 
-def sample_curve(offset, spread, magnitude, x):
-    """Produce a curve that looks like the overfitting example in "The Little Book of Deep Learning" by François Fleuret."""
-    return magnitude * 2**(-(x - offset)**2/spread)
+def sample_curve(x):
+    """Produce a curve for fitting examples."""
+    return 2**(-10*(x - 0.5)**2)
 
 
 # The x and y points along a curve
 x_samples = [0.2 * x for x in range(6)]
-y_samples = [sample_curve(0.5, 0.1, 1, x) for x in x_samples]
+y_samples = [sample_curve(x) for x in x_samples]
 
 ################
 # Learn the function and plot the pieces over each step.
@@ -103,7 +103,7 @@ net.eval()
 print("x, y samples, prediction")
 # Also plot some extra points to see how the fit generalizes between the training points
 x_samples = [0.025 * x for x in range(41)]
-y_samples = [sample_curve(0.5, 0.1, 1, x) for x in x_samples]
+y_samples = [sample_curve(x) for x in x_samples]
 prediction = net(torch.tensor(x_samples).view((len(x_samples), 1))).flatten().tolist()
 for idx, point in enumerate(zip(x_samples, y_samples)):
     print(f"{point[0]}, {point[1]}, {prediction[idx]}")
