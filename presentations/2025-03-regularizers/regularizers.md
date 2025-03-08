@@ -455,7 +455,7 @@ The L2 penalty has more utility than this.
 
 Let's revisit curve fitting
 
-We'll start with pre-solved parameters to demonstrate the worst-case
+We'll start with pre-solved parameters to demonstrate a worst-case outcome.
 
 ```python []
 import math
@@ -546,7 +546,7 @@ This verifies that we have a solution.
 The solution is at a minima, meaning the loss approaches 0.
 
 ```python []
-# To check for errors:
+# To check the error:
 net.train()
 loss_fn = torch.nn.MSELoss(reduction='sum')
 x_inputs = torch.tensor(x_samples).view((len(x_samples), 1))
@@ -563,7 +563,7 @@ Loss is 1.1013412404281553e-13
 
 We can make the network worse without changing the loss:
 
-```python
+```python [17:]
 # Larger model so we can insert errors
 net = torch.nn.Sequential(
         torch.nn.Linear(1, 9),
@@ -571,7 +571,7 @@ net = torch.nn.Sequential(
         torch.nn.Linear(9, 1))
 ```
 
-```python []
+```python [51:]
     # Now add in an egregious error in the middle of the points
     error_begin = x_samples[2] + (x_samples[3] - x_samples[2])/5
     error_end = x_samples[3] - (x_samples[3] - x_samples[2])/5
@@ -668,7 +668,34 @@ Final loss is 0.021319851279258728
 
 It isn't perfect, but it is an improvement.
 
-Tuning could make it better.
+This helps when training data is sparse and with out of domain data. What about biased data?
+
+---
+
+## Data Bias
+
+Great example from [Google research](https://research.google/blog/inceptionism-going-deeper-into-neural-networks/) into neural network visualization in 2015:
+
+> [T]his reveals that the neural net isn’t quite looking for the thing we thought it was. For example, here’s what one neural net we designed thought dumbbells looked like:
+
+<img src="./figures/dumbbells.png" style="height: 300px" />
+
+Arms are correlated with dumbbells, hence the confusion.
+
+---
+
+## Correlations
+
+* DNNs mine for signals that are correlated with a desired output
+  * e.g. eyes are correlated with faces
+* Some correlations are weak, some are strong, and some are just spurious
+* A hard problem; living creatures can be fooled by data bias as well
+
+<img src="./figures/Automeris_ioPCCA20040704-2975AB1.jpg" style="height: 600px" />
+<img src="./figures/Glaucidium_californicum_Verdi_Sierra_Pines_2_(detail).jpg" style="height: 600px" />
+
+<sub style="font-size: 0.5em">By Patrick Coin (Patrick Coin) - Photograph taken by Patrick Coin, CC BY-SA 2.5, https://commons.wikimedia.org/w/index.php?curid=768361<br/>
+By Tim from Ithaca - Northern Pygmy Owl, CC BY 2.0, https://commons.wikimedia.org/w/index.php?curid=96044504</sub>
 
 ---
 
@@ -676,16 +703,11 @@ Tuning could make it better.
 
 * Different benefits have been ascribed to [Dropout](https://arxiv.org/abs/1207.0580)
   * Prevent "co-adaptation" of features
+    * As per Hinton's 2012 paper and Alexnet
   * Create a superposition of smaller DNNs within a larger DNN
-    * Comes with the same advantages of a random forest
-
----
-
-## Concrete Example
-
-* DNNs are used to mine for signals in complex data to correlated to a desired output
-  * e.g. eyes are correlated with faces
-* Some correlations are weak, some are strong, and some are just spurious 
+    * Comes with the same advantages as an ensemble
+    * This is a more recent explanation
+* Dropout makes models prefer stronger signals over weaker signals
 
 ---
 
