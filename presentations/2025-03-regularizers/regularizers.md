@@ -679,6 +679,16 @@ Tuning could make it better.
   * Create a superposition of smaller DNNs within a larger DNN
     * Comes with the same advantages of a random forest
 
+---
+
+## Concrete Example
+
+* DNNs are used to mine for signals in complex data to correlated to a desired output
+  * e.g. eyes are correlated with faces
+* Some correlations are weak, some are strong, and some are just spurious 
+
+---
+
 <!-- for dropout, show example with incorrect correlation -- different kind of noise -->
 <!-- Dropout works similarly to old genetic algorithms, with new networks "created" by dropping out portions of the entire pool of parameters. If a set of parameters is very highly correlated with the answer, those parameters "take over" the network. If a dropout creation is missing them, but all of the other weights are built around them, that pushes more weights to mimic the same features. Inefficient globally, but locally good. -->
 <!-- See if you can extend that to an image example, where correlations are obvious. Can you show different activations in emnist models with and without dropout? -->
