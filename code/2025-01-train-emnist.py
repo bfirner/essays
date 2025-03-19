@@ -121,12 +121,12 @@ def get_dataset_classes(dataset):
     return max_class + 1
 
 ################
-# Big model
+# Testing
 
 if args.test == "emnist_multiclass":
     torch.random.manual_seed(args.seed)
 
-    # We need to convert the image fro PIL format into torch tensors
+    # We need to convert the image from PIL format into torch tensors
     preprocess = transforms.Compose([
         transforms.ToImageTensor(),
         transforms.ConvertImageDtype()
