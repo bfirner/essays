@@ -137,45 +137,67 @@ def run_labeller():
             found, foundbbox = tracker.update(frame)
             score = tracker.getTrackingScore()
 
-            x, y, w, h = foundbbox
-            cv2.rectangle(display_frame, (x, y), (x+w, y+h), text_yellow, 2)
-            cv2.putText(display_frame, f"Score: {score}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
-            cv2.putText(display_frame, "Press any key to stop tracking.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
+            if found:
+                x, y, w, h = foundbbox
+                cv2.rectangle(display_frame, (x, y), (x+w, y+h), text_yellow, 2)
+                cv2.putText(display_frame, f"Score: {score}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
+                cv2.putText(display_frame, "Press any key to stop tracking.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
 
-            # Add the found area to the positive examples and select something else for a negative example
-            # We don't need to store the images, only the feature vectors
-            # Sizes must be 224 by 224 or they will be resized
-            # TODO FIXME Make 224x224 boxes with a positive and negative example
-            left = x
-            top = y
-            if w < vectorizer.inDim():
-                # Widen the bbox
-                extra = vectorizer.inDim() - w
-                left = x - extra//2
-                if left < 0:
-                    left = 0
-            if h < vectorizer.inDim():
-                # Heighten the bbox
-                extra = vectorizer.inDim() - h
-                top = top - extra//2
-                if top < 0:
-                    top = 0
-            # TODO FIXME If they are wider than the inDim, use cv2.resize
-            positive_image = frame[top:top+vectorizer.inDim(), left:left+vectorizer.inDim(), :]
+                # Add the found area to the positive examples and select something else for a negative example
+                # We don't need to store the images, only the feature vectors
+                # Sizes must be 224 by 224 or they will be resized
+                # TODO FIXME Make 224x224 boxes with a positive and negative example
+                left = x
+                top = y
+                if w < vectorizer.inDim():
+                    # Widen the bbox
+                    extra = vectorizer.inDim() - w
+                    left = x - extra//2
+                    if left < 0:
+                        left = 0
+                if h < vectorizer.inDim():
+                    # Heighten the bbox
+                    extra = vectorizer.inDim() - h
+                    top = top - extra//2
+                    if top < 0:
+                        top = 0
+                # TODO FIXME If they are wider than the inDim, use cv2.resize
+                positive_image = frame[top:top+vectorizer.inDim(), left:left+vectorizer.inDim(), :]
 
-            # Make a negative example from a different part of the image
-            if left + vectorizer.inDim() < frame_w/2:
-                nleft = left + vectorizer.inDim()
+                # Make a negative example from a different part of the image
+                # Check the margins left over from the *tracking bounding box* at the left, right, top, and bottom to see where we can put it
+                lmargin = x
+                rmargin = frame_w - (x + w)
+                if lmargin < rmargin:
+                    # Begin to the right of the bounding box
+                    nleft = x + w
+                else:
+                    # Begin to the left of the bounding box
+                    nleft = x - vectorizer.inDim()
+                tmargin = y
+                bmargin = frame_h - (y + h)
+                if tmargin < bmargin:
+                    # Begin below the bounding box
+                    ntop = y + h
+                else:
+                    # Begin above the bounding box
+                    ntop = y - vectorizer.inDim()
+                print(f"bbox was {foundbbox}")
+                print(f"left and top are {left} and {top} and image is size {frame_w} by {frame_h}")
+                print(f"nleft and ntop are {nleft} and {ntop} and image is size {frame_w} by {frame_h}")
+                negative_image = frame[ntop:ntop+vectorizer.inDim(), nleft:nleft+vectorizer.inDim(), :]
+
+                positive_examples.append(vectorizer.getFeatures(positive_image))
+                negative_examples.append(vectorizer.getFeatures(negative_image))
             else:
-                nleft = left - vectorizer.inDim()
-            if top + vectorizer.inDim() < frame_h/2:
-                ntop = top + vectorizer.inDim()
-            else:
-                ntop = top - vectorizer.inDim()
-            negative_image = frame[ntop:ntop+vectorizer.inDim(), nleft:nleft+vectorizer.inDim(), :]
-
-            positive_examples.append(vectorizer.getFeatures(positive_image))
-            negative_examples.append(vectorizer.getFeatures(negative_image))
+                if 0 < len(positive_examples):
+                    # Stop tracking and train the svm, then switch to classifying mode.
+                    labels = [1] * len(positive_examples) + [0] * len(negative_examples)
+                    clf = svm.SVC()
+                    clf.fit(positive_examples + negative_examples, labels)
+                    mode = "classifying"
+                else:
+                    mode = "waiting"
         elif mode == "classifying":
             # TODO Classify
             # TODO Begin with a center crop, but move on to a tiled tracking window 
