@@ -229,14 +229,18 @@ def run_labeller():
         elif mode == "classifying":
             # Classify
             # TODO Begin with a center crop, but move on to a tiled tracking window 
-            center_left = vid_height//2 - vectorizer.inDim()//2
-            center_top = vid_width//2 - vectorizer.inDim()//2
+            center_left = vid_width//2 - vectorizer.inDim()//2
+            center_top = vid_height//2 - vectorizer.inDim()//2
             center_right = center_left + vectorizer.inDim()
             center_bottom = center_top + vectorizer.inDim()
             center_window = frame[center_top:center_bottom, center_left:center_right]
             features = vectorizer.getFeatures(center_window)[0].flatten()
             prediction = clf.predict([features])
 
+            if prediction[0] == 0:
+                rect_color = text_yellow
+            if prediction[0] == 1:
+                rect_color = text_green
             cv2.rectangle(display_frame, (center_left, center_top), (center_right, center_bottom), text_yellow, 2)
             cv2.putText(display_frame, f"Prediction: {prediction}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
             cv2.putText(display_frame, "Press 's' to bbox a target.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
