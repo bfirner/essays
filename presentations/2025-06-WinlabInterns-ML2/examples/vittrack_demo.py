@@ -106,7 +106,21 @@ def run_labeller():
     # Open the webcam
     video = cv2.VideoCapture(0)
 
-    # Remember what we are doing.
+    # Check and set some properties
+    # See the OpenCV docs for a list of properties:
+    # https://docs.opencv.org/4.11.0/d4/d15/group__videoio__flags__base.html#gaeb8dd9c89c10a5c63c139bf7c4f5704d
+    # or samples in OpenCV repository: python/samples/video.py and python/samples/video_v4l2.py
+    vid_width = video.get(cv2.CAP_PROP_FRAME_WIDTH)
+    vid_height = video.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    # Sample bboxes will be 224 pixels wide. We want to always be able to fit two 224x224 boxes in an image,
+    # so set a minimum frame size of 960x720 pixels
+    if vid_height < 720:
+        video.set(cv2.CAP_PROP_FRAME_WIDTH, 960)
+        video.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
+    vid_width = int(video.get(cv2.CAP_PROP_FRAME_WIDTH))
+    vid_height = int(video.get(cv2.CAP_PROP_FRAME_HEIGHT))
+
+    # Remember the current UI state.
     # waiting: the user needs to draw a bounding box and start training
     # tracking: the object is being tracked
     # classifying: classifying with the SVM, waiting to draw a new bounding box
@@ -118,7 +132,7 @@ def run_labeller():
     def isKey(cvkey, key):
         return key == (cvkey & 0xFF)
 
-    # Keep going until capture failes or the user quits
+    # Keep going until capture fails or the user quits
     has_frame, frame = video.read()
 
     positive_examples = []
@@ -130,7 +144,7 @@ def run_labeller():
 
     while mode != "quitting" and has_frame:
         display_frame = frame.copy()
-        frame_h, frame_w, _ = display_frame.shape
+        #frame_h, frame_w, _ = display_frame.shape
         if mode == "waiting":
             cv2.putText(display_frame, "Press 's' to bbox a target.", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
         elif mode == "tracking":
@@ -162,33 +176,47 @@ def run_labeller():
                     if top < 0:
                         top = 0
                 # TODO FIXME If they are wider than the inDim, use cv2.resize
+                cv2.rectangle(display_frame, (left, top), (left+vectorizer.inDim(), top+vectorizer.inDim()), text_green, 1)
                 positive_image = frame[top:top+vectorizer.inDim(), left:left+vectorizer.inDim(), :]
+                # Remember this positive example
+                positive_examples.append(vectorizer.getFeatures(positive_image)[0].flatten())
+                # Won't need the image anymore
+                del positive_image
 
                 # Make a negative example from a different part of the image
-                # Check the margins left over from the *tracking bounding box* at the left, right, top, and bottom to see where we can put it
-                lmargin = x
-                rmargin = frame_w - (x + w)
-                if lmargin < rmargin:
-                    # Begin to the right of the bounding box
-                    nleft = x + w
-                else:
-                    # Begin to the left of the bounding box
-                    nleft = x - vectorizer.inDim()
-                tmargin = y
-                bmargin = frame_h - (y + h)
-                if tmargin < bmargin:
-                    # Begin below the bounding box
-                    ntop = y + h
-                else:
-                    # Begin above the bounding box
-                    ntop = y - vectorizer.inDim()
-                print(f"bbox was {foundbbox}")
-                print(f"left and top are {left} and {top} and image is size {frame_w} by {frame_h}")
-                print(f"nleft and ntop are {nleft} and {ntop} and image is size {frame_w} by {frame_h}")
-                negative_image = frame[ntop:ntop+vectorizer.inDim(), nleft:nleft+vectorizer.inDim(), :]
+                if w < vid_width/2 or h < vid_height/2:
+                    # Try to fit to the left of the object with a 20 pixel buffer.
+                    # Go to the right if there is no room.
+                    if x > vectorizer.inDim() + 20:
+                        nright = x - 20
+                        nleft = nright - vectorizer.inDim()
+                    else:
+                        nleft = x + w + 20
+                        nright = nleft + vectorizer.inDim()
+                    # Try to fit above the object, but go below if there is no room.
+                    if y > vectorizer.inDim() + 20:
+                        nbottom = y - 20
+                        ntop = nbottom - vectorizer.inDim()
+                    else:
+                        ntop = y + h + 20
+                        nbottom = ntop + vectorizer.inDim()
+                    # With some very wide or tall bounding boxes, we may still be outside of the image
+                    # It's okay so long as one of the dimensions allows us to avoid the positive example
+                    if nright < vid_width or bottom < vid_height:
+                        if nright >= vid_width:
+                            # We can fit below the positive example
+                            nright = vid_width - 1
+                            nleft = nright - vectorizer.inDim()
+                        if nbottom >= vid_height:
+                            # We can fit below the positive example
+                            nbottom = vid_height - 1
+                            ntop = nbottom - vectorizer.inDim()
 
-                positive_examples.append(vectorizer.getFeatures(positive_image))
-                negative_examples.append(vectorizer.getFeatures(negative_image))
+                        cv2.rectangle(display_frame, (nleft, ntop), (nright, nbottom), text_red, 1)
+                        negative_image = frame[ntop:nbottom, nleft:nright, :]
+                        negative_examples.append(vectorizer.getFeatures(negative_image)[0].flatten())
+                        # Won't need the image anymore
+                        del negative_image
             else:
                 if 0 < len(positive_examples):
                     # Stop tracking and train the svm, then switch to classifying mode.
@@ -199,15 +227,15 @@ def run_labeller():
                 else:
                     mode = "waiting"
         elif mode == "classifying":
-            # TODO Classify
+            # Classify
             # TODO Begin with a center crop, but move on to a tiled tracking window 
-            center_left = frame_h - vectorizer.inDim()//2
-            center_top = frame_w - vectorizer.inDim()//2
+            center_left = vid_height//2 - vectorizer.inDim()//2
+            center_top = vid_width//2 - vectorizer.inDim()//2
             center_right = center_left + vectorizer.inDim()
             center_bottom = center_top + vectorizer.inDim()
             center_window = frame[center_top:center_bottom, center_left:center_right]
-            features = vectorizer.getFeatures(center_window)
-            prediction = clf.predict(features)
+            features = vectorizer.getFeatures(center_window)[0].flatten()
+            prediction = clf.predict([features])
 
             cv2.rectangle(display_frame, (center_left, center_top), (center_right, center_bottom), text_yellow, 2)
             cv2.putText(display_frame, f"Prediction: {prediction}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
@@ -219,6 +247,7 @@ def run_labeller():
         key = cv2.waitKey(1)
         if key > 0:
             if isKey(key, ord('q')):
+                print("Quitting")
                 mode = "quitting"
             elif isKey(key, ord('s')):
                 if mode != "tracking":
