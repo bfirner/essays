@@ -202,7 +202,7 @@ def run_labeller():
                         nbottom = ntop + vectorizer.inDim()
                     # With some very wide or tall bounding boxes, we may still be outside of the image
                     # It's okay so long as one of the dimensions allows us to avoid the positive example
-                    if nright < vid_width or bottom < vid_height:
+                    if nright < vid_width or nbottom < vid_height:
                         if nright >= vid_width:
                             # We can fit below the positive example
                             nright = vid_width - 1
@@ -241,7 +241,7 @@ def run_labeller():
                 rect_color = text_yellow
             if prediction[0] == 1:
                 rect_color = text_green
-            cv2.rectangle(display_frame, (center_left, center_top), (center_right, center_bottom), text_yellow, 2)
+            cv2.rectangle(display_frame, (center_left, center_top), (center_right, center_bottom), rect_color, 2)
             cv2.putText(display_frame, f"Prediction: {prediction}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
             cv2.putText(display_frame, "Press 's' to bbox a target.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
 
