@@ -123,7 +123,9 @@ def run_labeller():
     # Remember the current UI state.
     # waiting: the user needs to draw a bounding box and start training
     # tracking: the object is being tracked
-    # classifying: classifying with the SVM, waiting to draw a new bounding box
+    # classifying_fixed: classifying with the SVM, using a search grid to find the object
+    # classifying_search: classifying with the SVM, using a search grid to find the object
+    # classifying_track: classifying with the SVM, tracking the object
     # quitting: the user wants to exit
     mode = "waiting"
 
@@ -146,7 +148,7 @@ def run_labeller():
         display_frame = frame.copy()
         #frame_h, frame_w, _ = display_frame.shape
         if mode == "waiting":
-            cv2.putText(display_frame, "Press 's' to bbox a target.", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
+            cv2.putText(display_frame, "Press 't' to bbox and track a target.", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
         elif mode == "tracking":
             found, foundbbox = tracker.update(frame)
             score = tracker.getTrackingScore()
@@ -223,27 +225,42 @@ def run_labeller():
                     labels = [1] * len(positive_examples) + [0] * len(negative_examples)
                     clf = svm.SVC()
                     clf.fit(positive_examples + negative_examples, labels)
-                    mode = "classifying"
+                    mode = "classifying_fixed"
                 else:
                     mode = "waiting"
-        elif mode == "classifying":
-            # Classify
-            # TODO Begin with a center crop, but move on to a tiled tracking window 
-            center_left = vid_width//2 - vectorizer.inDim()//2
-            center_top = vid_height//2 - vectorizer.inDim()//2
-            center_right = center_left + vectorizer.inDim()
-            center_bottom = center_top + vectorizer.inDim()
-            center_window = frame[center_top:center_bottom, center_left:center_right]
-            features = vectorizer.getFeatures(center_window)[0].flatten()
-            prediction = clf.predict([features])
+        elif mode.startswith("classifying"):
+            def centerToBox(x, y, width):
+                return x - width//2, y - width//2, x + width//2, y + width//2
+            if mode.endswith("search"):
+                # Used multiple tiles to search
+                # Hit the center and the four corners
+                boxes = [centerToBox(vid_width//2, vid_height//2, vid_width//3)]
+                for voffset in [1, 2]:
+                    for hoffset in [1, 3]:
+                        boxes.append(centerToBox(hoffset * vid_width//5, voffset * vid_height//4,  vid_width//3))
+            elif mode.endswith("track"):
+                # Using a tracking box. Revert to "tracking_search" if the object is lost
+                pass
+            else:
+                # Classify on a center box
+                boxes = [centerToBox(vid_width//2, vid_height//2, vectorizer.inDim())]
 
-            if prediction[0] == 0:
-                rect_color = text_yellow
-            if prediction[0] == 1:
-                rect_color = text_green
-            cv2.rectangle(display_frame, (center_left, center_top), (center_right, center_bottom), rect_color, 2)
-            cv2.putText(display_frame, f"Prediction: {prediction}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
-            cv2.putText(display_frame, "Press 's' to bbox a target.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
+            windows = [frame[top:bottom, left:right] for left, top, right, bottom in boxes]
+            # TODO Run in a batch rather than one at a time
+            features = [vectorizer.getFeatures(window)[0].flatten() for window in windows]
+            predictions = clf.predict(features)
+
+            for i, (left, top, right, bottom) in enumerate(boxes):
+                if predictions[i] == 0:
+                    rect_color = text_yellow
+                if predictions[i] == 1:
+                    rect_color = text_green
+                    # If we were searching and found the target, update the next window
+                    if mode.endswith("search"):
+                        pass
+                cv2.rectangle(display_frame, (left, top), (right, bottom), rect_color, 2)
+            cv2.putText(display_frame, f"Predictions: {predictions}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
+            cv2.putText(display_frame, "Press 't' to bbox and track a target.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
 
 
         cv2.imshow('Label Demo', display_frame)
@@ -253,7 +270,7 @@ def run_labeller():
             if isKey(key, ord('q')):
                 print("Quitting")
                 mode = "quitting"
-            elif isKey(key, ord('s')):
+            elif isKey(key, ord('t')):
                 if mode != "tracking":
                     display_frame = frame.copy()
                     cv2.putText(display_frame, "Select the object of interest to begin tracking", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
@@ -262,12 +279,17 @@ def run_labeller():
                     # Initialize the tracker using the original frame (i.e. without the text on it)
                     tracker.init(frame, roi)
                     mode = "tracking"
+            elif isKey(key, ord('\t')) and mode.startswith("classifying"):
+                if mode.endswith("fixed"):
+                    mode = "classifying_search"
+                else:
+                    mode = "classifying_fixed"
             elif mode == "tracking":
                 # Stop tracking and train the svm, then switch to classifying mode.
                 labels = [1] * len(positive_examples) + [0] * len(negative_examples)
                 clf = svm.SVC()
                 clf.fit(positive_examples + negative_examples, labels)
-                mode = "classifying"
+                mode = "classifying_fixed"
 
         # Grab the next frame
         has_frame, frame = video.read()
