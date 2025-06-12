@@ -175,6 +175,8 @@ pip3 install opencv-python
 <!--<section style="text-align: left;">-->
 
 ```
+sudo apt-get install git-lfs
+pip3 install onnx
 pip3 install opencv-python
 git clone https://github.com/opencv/opencv_zoo
 cd opencv_zoo
