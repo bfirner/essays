@@ -169,14 +169,14 @@ def run_labeller():
                     # Widen the bbox
                     extra = vectorizer.inDim() - w
                     left = x - extra//2
-                    if left < 0:
-                        left = 0
+                if left < 0:
+                    left = 0
                 if h < vectorizer.inDim():
                     # Heighten the bbox
                     extra = vectorizer.inDim() - h
                     top = top - extra//2
-                    if top < 0:
-                        top = 0
+                if top < 0:
+                    top = 0
                 # TODO FIXME If they are wider than the inDim, use cv2.resize
                 cv2.rectangle(display_frame, (left, top), (left+vectorizer.inDim(), top+vectorizer.inDim()), text_green, 1)
                 positive_image = frame[top:top+vectorizer.inDim(), left:left+vectorizer.inDim(), :]
@@ -231,13 +231,19 @@ def run_labeller():
         elif mode.startswith("classifying"):
             def centerToBox(x, y, width):
                 return x - width//2, y - width//2, x + width//2, y + width//2
+            def getSearchBoxes(center, size):
+                boxes = []
+                # Give the boxes 10% overlap by shifting them 5% nearer to one another
+                shift = size//20
+                for voffset in [-1, 1]:
+                    for hoffset in [-1, 1]:
+                        boxes.append(centerToBox(center[0] + hoffset * (size//2 - shift), center[1] + voffset * (size//2 - shift),  size))
+                return boxes
             if mode.endswith("search"):
-                # Used multiple tiles to search
-                # Hit the center and the four corners
-                boxes = [centerToBox(vid_width//2, vid_height//2, vid_width//3)]
-                for voffset in [1, 2]:
-                    for hoffset in [1, 3]:
-                        boxes.append(centerToBox(hoffset * vid_width//5, voffset * vid_height//4,  vid_width//3))
+                # Used multiple tiles to search, breaking the image into four quadrants
+                search_center = (vid_width//2, vid_height//2)
+                search_size = vid_width//3
+                boxes = getSearchBoxes(search_center, search_size)
             elif mode.endswith("track"):
                 # Using a tracking box. Revert to "tracking_search" if the object is lost
                 pass
