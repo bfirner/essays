@@ -229,8 +229,11 @@ def run_labeller():
                 else:
                     mode = "waiting"
         elif mode.startswith("classifying"):
+            # Some quick functions to simplify the code in here
             def centerToBox(x, y, width):
-                return x - width//2, y - width//2, x + width//2, y + width//2
+                safe_x = min(vid_width - width//2 - 1, max(x, width//2))
+                safe_y = min(vid_height - width//2 - 1, max(y, width//2))
+                return safe_x - width//2, safe_y - width//2, safe_x + width//2, safe_y + width//2
             def getSearchBoxes(center, size):
                 boxes = []
                 # Give the boxes 10% overlap by shifting them 5% nearer to one another
@@ -245,8 +248,8 @@ def run_labeller():
                 search_size = vid_width//3
                 boxes = getSearchBoxes(search_center, search_size)
             elif mode.endswith("track"):
-                # Using a tracking box. Revert to "tracking_search" if the object is lost
-                pass
+                # Using a tracking box. We will revert to "tracking_search" if the object is lost
+                boxes = getSearchBoxes(search_center, search_size)
             else:
                 # Classify on a center box
                 boxes = [centerToBox(vid_width//2, vid_height//2, vectorizer.inDim())]
@@ -256,6 +259,8 @@ def run_labeller():
             features = [vectorizer.getFeatures(window)[0].flatten() for window in windows]
             predictions = clf.predict(features)
 
+            # Track which boxes had the target if we are tracking
+            box_centers = []
             for i, (left, top, right, bottom) in enumerate(boxes):
                 if predictions[i] == 0:
                     rect_color = text_yellow
@@ -263,10 +268,30 @@ def run_labeller():
                     rect_color = text_green
                     # If we were searching and found the target, update the next window
                     if mode.endswith("search"):
-                        pass
+                        mode = "classifying_track"
+                    if mode.endswith("track"):
+                        box_centers.append(((left+right)/2, (top+bottom)/2))
+
                 cv2.rectangle(display_frame, (left, top), (right, bottom), rect_color, 2)
             cv2.putText(display_frame, f"Predictions: {predictions}", (0, 25), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
             cv2.putText(display_frame, "Press 't' to bbox and track a target.", (0, 45), cv2.FONT_HERSHEY_SIMPLEX, 1, text_yellow)
+
+            # Update tracking
+            if mode.endswith("track"):
+                hits = len(box_centers)
+                if 0 < hits:
+                    # Average the centers to find a new center
+                    avg_x = int(sum([x/hits for x, _ in box_centers]))
+                    avg_y = int(sum([y/hits for _, y in box_centers]))
+                    search_center = (avg_x, avg_y)
+                    # Leave the size unchanged unless we've narrowed the target to a single box
+                    # Don't try to reduce the boxes to smaller than the network input size though
+                    if hits == 1:
+                        search_size = max(vectorizer.inDim(), search_size / 2)
+                else:
+                    # Nothing was found, go back to searching
+                    mode = "classifying_search"
+
 
 
         cv2.imshow('Label Demo', display_frame)
@@ -283,8 +308,9 @@ def run_labeller():
                     cv2.imshow('Label Demo', display_frame)
                     roi = cv2.selectROI('Label Demo', display_frame)
                     # Initialize the tracker using the original frame (i.e. without the text on it)
-                    tracker.init(frame, roi)
-                    mode = "tracking"
+                    if roi[0] > 0 and roi[0] > 0:
+                        tracker.init(frame, roi)
+                        mode = "tracking"
             elif isKey(key, ord('\t')) and mode.startswith("classifying"):
                 if mode.endswith("fixed"):
                     mode = "classifying_search"
