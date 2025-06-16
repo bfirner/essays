@@ -77,7 +77,10 @@ Bernhard Firner
 Top result on the day I searched\
 [https://github.com/ultralytics/ultralytics](https://github.com/ultralytics/ultralytics)
 
+<!--
 <img src="./figures/2025-05-27_16-41-UltralyticsYolo.png" style="height: 750px" />
+-->
+<img class="r-stretch" src="./figures/2025-05-27_16-41-UltralyticsYolo.png" />
 
 ---
 

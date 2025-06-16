@@ -22,16 +22,18 @@ Bernhard Firner
 
 ## So you think you're doing something new
 
-* Detect or track a new object
-* Distinguish between different types of an existing object class
-* etc
+* You can't download something that "just works" because you need to
+  * detect or track a new object
+  * distinguish between different types of an existing object class
+  * and so on
+* That doesn't mean you need to start from scratch
 
 ---
 
 ## Walk Before Running
 
-* Re-use part of an existing, pretrained DNN
 * Re-used code is the best code, re-used models are the best models
+* Re-use part of an existing, pretrained DNN
 * This talk:
   * save a ton of time and effort with re-use
   * innovate with existing models to create new applications
@@ -52,23 +54,45 @@ Bernhard Firner
 
 ## Cut and Reuse
 
-* There's an old solution
+<!--<section style="text-align: left;">-->
 
-1. Download the biggest DNN trained on similar data
-2. Cut off the end of the DNN
-3. Add and retrain a new classifier head
+* Use a ten year old solution
+  1. Download the biggest DNN trained on similar data
+  2. Cut off the end of the DNN
+  3. Train a new classifier using the DNN features
 
 ---
 
-## Why did that work?
+## Magic?
 
-* Old neural networks (e.g. early convnets like LeNet) had distinct sections
+<style>
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+
+* Old NNs (like LeNet) had distinct sections
   * Convolutions in the beginning
     * Break image features into semantic features
   * Linear layers at the end
     * Pulled features apart for classification
-* Chopping off the linear layers left a model that output features
-* It was easy to re-use them to detect new classes
+
+</div>
+<div class="col">
+<img class="r-stretch" src="./figures/resnet_top_zoom.png" />
+</div>
+</div>
+
+---
+
+## Universal Features
+
+* Serendipitously, those features appear to be universal
+  * Meaning that they apply to almost any object types
+* Chopping off the linear layers leaves a model that outputs features
+* It's easy to re-use those to detect new classes
 
 ---
 
@@ -88,11 +112,13 @@ Bernhard Firner
 
 ---
 
-## Support Vector Machine
+## Support Vector Machines
 
-* Trains with only a small number of samples
+* Train with only a small number of samples
 * Mathematically sound
 * Only works on collectins of numbers
+* Available in scikit python package:
+  * `pip3 install scikit-learn`
 
 ---
 
