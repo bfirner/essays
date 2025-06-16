@@ -1,5 +1,7 @@
-# This file is part of OpenCV Zoo project.
-# It is subject to the license terms in the LICENSE file found in the same directory.
+#!/usr/bin/python3
+
+# This is an example demonstrating the reuse of a model as a feature extractor.
+# This demo covers dataset collection, SVM training, object detection, and object tracking.
 
 import argparse
 
@@ -18,29 +20,8 @@ if cv_version[0] != "4" or int(cv_version[1]) < 10:
     quit(0)
 
 
-
-def visualize(image, bbox, score, isLocated, fps=None, box_color=(0, 255, 0),text_color=(0, 255, 0), fontScale = 1, fontSize = 1):
-    # TODO FIXME Delete
-    output = image.copy()
-    h, w, _ = output.shape
-
-    if fps is not None:
-        cv2.putText(output, 'FPS: {:.2f}'.format(fps), (0, 30), cv2.FONT_HERSHEY_DUPLEX, fontScale, text_color, fontSize)
-
-    if isLocated and score >= 0.3:
-        # bbox: Tuple of length 4
-        x, y, w, h = bbox
-        cv2.rectangle(output, (x, y), (x+w, y+h), box_color, 2)
-        cv2.putText(output, '{:.2f}'.format(score), (x, y+25), cv2.FONT_HERSHEY_DUPLEX, fontScale, text_color, fontSize)
-    else:
-        text_size, baseline = cv2.getTextSize('Target lost!', cv2.FONT_HERSHEY_DUPLEX, fontScale, fontSize)
-        text_x = int((w - text_size[0]) / 2)
-        text_y = int((h - text_size[1]) / 2)
-        cv2.putText(output, 'Target lost!', (text_x, text_y), cv2.FONT_HERSHEY_DUPLEX, fontScale, (0, 0, 255), fontSize)
-
-    return output
-
 class Vectorizer:
+    """This class encapsulates model inference to extract a feature vector."""
     def __init__(self, model):
         self._model = cv2.dnn.readNet(model)
         self._input_names = ''
@@ -72,7 +53,8 @@ class Vectorizer:
         return features
 
 
-def run_labeller():
+def run_demo():
+    """Demo data collection, object detection, and tracking with a simple GUI."""
     parser = argparse.ArgumentParser(
         description="VIT dataset labeller")
     parser.add_argument(
@@ -122,8 +104,8 @@ def run_labeller():
 
     # Remember the current UI state.
     # waiting: the user needs to draw a bounding box and start training
-    # tracking: the object is being tracked
-    # classifying_fixed: classifying with the SVM, using a search grid to find the object
+    # tracking: vit is being used to track and label new data
+    # classifying_fixed: classifying with the SVM, using a single box
     # classifying_search: classifying with the SVM, using a search grid to find the object
     # classifying_track: classifying with the SVM, tracking the object
     # quitting: the user wants to exit
@@ -229,7 +211,7 @@ def run_labeller():
                 else:
                     mode = "waiting"
         elif mode.startswith("classifying"):
-            # Some quick functions to simplify the code in here
+            # Some local functions to simplify the code in here
             def centerToBox(x, y, width):
                 safe_x = min(vid_width - width//2 - 1, max(x, width//2))
                 safe_y = min(vid_height - width//2 - 1, max(y, width//2))
@@ -331,4 +313,4 @@ def run_labeller():
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
-    run_labeller()
+    run_demo()
