@@ -93,22 +93,31 @@ Bernhard Firner
   * Meaning that they apply to almost any object types
 * Chopping off the linear layers leaves a model that outputs features
 * It's easy to re-use those to detect new classes
+  * It was once popular to combine Support Vector Machines (SVMs) with NN features for classification
 
 ---
 
 ## What's a feature?
 
+* Low level features come from early convolutions
+  * Could be lines: vertical, horizontal, diagonal
+  * Could be textures: hard, soft
+* High Level features are more abstract
+  * e.g. an eye or a specific material
+* Intuitively, these can be used to detect different objects
 * TODO FIXME
 * TODO Image of convolution, examples of features from art book (texture, specularity, shape)
 
 ---
 
-## Some new DNNs are more messy
+## Story is murky with recent models
 
-* Older models still work
-* Or find a simpler model
+* Some recent models are organized differently
+  * The story of simple features being converted to abstract features may not hold
+* But we don't need to use newer models
+  * Older models trained on older datasets can be fine
+* There are also simpler models trained on recent data
   * For example, a mobile-friendly model
-* Classically send the features to a Support Vector Machine (SVM) for classification
 
 ---
 
@@ -116,13 +125,13 @@ Bernhard Firner
 
 * Train with only a small number of samples
 * Mathematically sound
-* Only works on collectins of numbers
+* Only work on collectins of numbers
 * Available in scikit python package:
   * `pip3 install scikit-learn`
 
 ---
 
-## Example: instant detection and tracking
+## Example: ten second detection and tracking
 
 * TODO FIXME Show animated webp of the demo modes
   * Data collection

@@ -274,8 +274,6 @@ def run_demo():
                     # Nothing was found, go back to searching
                     mode = "classifying_search"
 
-
-
         cv2.imshow('Label Demo', display_frame)
 
         key = cv2.waitKey(1)
