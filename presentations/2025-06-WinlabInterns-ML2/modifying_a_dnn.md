@@ -1,5 +1,5 @@
 ---
-title: Modifying a DNN - Semi-Custom Solutions
+title: Repurposing a DNN - Semi-Custom Solutions
 ---
 
 <!--
@@ -10,7 +10,7 @@ From YOLO to Stable Diffusion, downloading and running a neural network locally 
 But what if you don't just want to run a model; what if you want good results?
 -->
 
-# Modifying a DNN
+# Repurposing a DNN
 
 ## Semi-Custom Solutions
 
@@ -20,7 +20,7 @@ Bernhard Firner
 
 ---
 
-## So you think you're doing something new
+## Some problems are new
 
 * You can't download something that "just works" because you need to
   * detect or track a new object
@@ -33,20 +33,20 @@ Bernhard Firner
 ## Walk Before Running
 
 * Re-used code is the best code, re-used models are the best models
-* Re-use part of an existing, pretrained DNN
+* Re-use part of an existing, pretrained DNN for a new task
 * This talk:
+  * don't start from scratch
   * save a ton of time and effort with re-use
   * innovate with existing models to create new applications
-  * don't assume you need a hand-crafted artisinal model for your project
 
 ---
 
-## Why Modify a DNN?
+## Why Reuse a DNN?
 
 * There are plenty of pretrained DNNs available
 * Limited by the available datasets
   * Good for classifying people and toilet seats
-  * Bad for new objects
+  * Can be bad for new objects
   * Bad for esoteric items or traits
   * Bad for distinguishing subsets
 
@@ -78,10 +78,30 @@ Bernhard Firner
     * Break image features into semantic features
   * Linear layers at the end
     * Pulled features apart for classification
+* LeNet, fyi, was used for check reading in the 90's
 
 </div>
 <div class="col">
 <img class="r-stretch" src="./figures/resnet_top_zoom.png" />
+</div>
+</div>
+
+---
+
+## What's a feature?
+
+
+<style>
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+<img src="./figures/PenAndInkDrawing-AlphonsoDunn.jpg" style="height: 1000px" />
+</div>
+<div class="col">
+<img src="./figures/AlphonsoDunn-StrokeUses.jpg" style="height: 1000px" />
 </div>
 </div>
 
