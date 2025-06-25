@@ -78,17 +78,37 @@ Bernhard Firner
     * Break image features into semantic features
   * Linear layers at the end
     * Pulled features apart for classification
-* LeNet, fyi, was used for check reading in the 90's
+* LeNet, fyi, was used to read zip codes in the 90's
 
 </div>
 <div class="col">
-<img class="r-stretch" src="./figures/resnet_top_zoom.png" />
+<img class="r-stretch" src="./figures/lenet5-netron.png" />
+<!--<img class="r-stretch" src="./figures/resnet_top_zoom.png" />-->
 </div>
 </div>
 
 ---
 
+## LeNet 5 (1998)
+
+[1998 paper](https://proceedings.neurips.cc/paper/1989/hash/53c3bce66e43be4f209556518c2fcb54-Abstract.html)
+
+<img class="r-stretch" src="./figures/LeNetAbstract1998.png" />
+
+---
+
 ## What's a feature?
+
+* Low level features come from early convolutions
+  * Could be lines: vertical, horizontal, diagonal
+  * Could be textures: hard, soft
+* High Level, semantic features are more abstract
+  * e.g. an eye or a specific material or quality
+* Intuitively, these can be used to detect different objects
+
+---
+
+## Example features
 
 
 <style>
@@ -107,47 +127,384 @@ Bernhard Firner
 
 ---
 
+## Filters and features
+
+```python []
+#!/usr/bin/python3
+
+# This code runs a provided filter over an image and saves the output.
+
+import argparse
+
+import numpy
+import cv2
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="Convolution demo.")
+    parser.add_argument(
+        '--image_path',
+        required=True,
+        type=str,
+        help='Path to an image file')
+    parser.add_argument(
+        '--outpath',
+        type=str,
+        default="filtered.png",
+        help='Path to save the filtered image')
+    parser.add_argument(
+        '--filter',
+        required=True,
+        nargs=9,
+        type=float,
+        help='A 3x3 filter with 9 values')
+    args = parser.parse_args()
+
+    kernel = numpy.array(args.filter).reshape((3,3))
+
+    image = cv2.imread(args.image_path)
+    if image is None:
+        print("Failed to load image.")
+        exit()
+
+    # Filter and keep the output depth the same
+    filtered = cv2.filter2D(src=image, ddepth=-1, kernel=kernel)
+    cv2.imwrite(args.outpath, filtered)
+```
+
+---
+
+## Feature and filter examples
+
+<style>
+.centered { text-align: center; margin-left: auto; margin-right: auto; }
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+
+Filter
+
+<table class="centered">
+<tr>
+  <th>1</th> <th>1</th> <th>1</th>
+</tr>
+<tr>
+  <th>0</th> <th>0</th> <th>0</th>
+</tr>
+<tr>
+  <th>-1</th> <th>-1</th> <th>-1</th>
+</tr>
+</table>
+
+</div>
+<div class="col">
+<img src="./figures/vertical.png" style="height: 1000px" />
+</div>
+</div>
+
+---
+
+## Feature and filter examples
+
+<style>
+.centered { text-align: center; margin-left: auto; margin-right: auto; }
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+
+Filter
+
+<table class="centered">
+<tr>
+  <th>-1</th> <th>0</th> <th>1</th>
+</tr>
+<tr>
+  <th>-1</th> <th>0</th> <th>1</th>
+</tr>
+<tr>
+  <th>-1</th> <th>0</th> <th>1</th>
+</tr>
+</table>
+
+</div>
+<div class="col">
+<img src="./figures/horizontal.png" style="height: 1000px" />
+</div>
+</div>
+
+---
+
+## Feature and filter examples
+
+<style>
+.centered { text-align: center; margin-left: auto; margin-right: auto; }
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+
+Filter
+
+<table class="centered">
+<tr>
+  <th>0</th> <th>1</th> <th>0</th>
+</tr>
+<tr>
+  <th>-1</th> <th>0</th> <th>1</th>
+</tr>
+<tr>
+  <th>0</th> <th>-1</th> <th>0</th>
+</tr>
+</table>
+
+</div>
+<div class="col">
+<img src="./figures/diag_ul_lr.png" style="height: 1000px" />
+</div>
+</div>
+
+---
+
+## Feature and filter examples
+
+<style>
+.centered { text-align: center; margin-left: auto; margin-right: auto; }
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+
+Filter
+
+<table class="centered">
+<tr>
+  <th>0</th> <th>1</th> <th>0</th>
+</tr>
+<tr>
+  <th>1</th> <th>0</th> <th>-1</th>
+</tr>
+<tr>
+  <th>0</th> <th>-1</th> <th>0</th>
+</tr>
+</table>
+
+</div>
+<div class="col">
+<img src="./figures/diag_ll_ur.png" style="height: 1000px" />
+</div>
+</div>
+
+---
+
+## "High Level" Features
+
+```python []
+#!/usr/bin/python3
+
+# This code runs a provided filter over an image and saves the output.
+
+import argparse
+
+import numpy
+import cv2
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(
+        description="Convolution demo.")
+    parser.add_argument(
+        '--image_path',
+        required=True,
+        type=str,
+        help='Path to an image file')
+    parser.add_argument(
+        '--outpath',
+        type=str,
+        default="filtered.png",
+        help='Path to save the filtered image')
+    args = parser.parse_args()
+
+    # Four basic filters
+    kernels = numpy.array(
+            [[[0,  1, 0],   # Lower left diagonal
+              [1,  0, -1],
+              [0, -1, 0]],
+             [[0,  1, 0],   # Upper left diagonal
+              [-1, 0, 1],
+              [0, -1, 0]],
+             [[1, 0, -1],   # Horizontal
+              [1, 0, -1],
+              [1, 0, -1]],
+             [[ 1,  1,  1], # Vertical
+              [ 0,  0,  0],
+              [-1, -1, -1]]])
+
+    image = cv2.imread(args.image_path)
+    if image is None:
+        print("Failed to load image.")
+        exit()
+
+    # Normalize the range from 0-255 to 0-1
+    image = image / 255.0
+
+    # Run through the same filters 2 times
+    for step in range(1):
+        outputs = []
+        for i in range(4):
+            # Filter and keep the output depth the same
+            filtered = cv2.filter2D(src=image, ddepth=-1, kernel=kernels[i])
+            # Set any negative values to 0
+            filtered[filtered < 0] = 0
+            # Set anything larger than 1 to 1
+            filtered[filtered > 1] = 1
+            outputs.append(filtered)
+
+    for step in range(3):
+        fuzzy_bias = -1
+        fuzzy_kernel = numpy.array(
+            [[0.4, 0, 0.4],
+             [0, 0.4, 0],
+             [0.4, 0, 0.4]])
+        fuzzy_outputs = [cv2.filter2D(src=output, ddepth=-1, kernel=fuzzy_kernel) for output in outputs]
+        fuzzy_sum = numpy.sum(fuzzy_outputs, axis=0) + fuzzy_bias
+        fuzzy_sum[fuzzy_sum < 0] = 0
+        fuzzy_sum[fuzzy_sum > 1] = 1
+        outputs = [fuzzy_sum]
+
+    for step in range(3):
+        fuzzy_bias = -1
+        fuzzy_kernel = numpy.array(
+            [[0, 0.5, 0],
+             [0.5, 0.4, 0.5],
+             [0, 0.5, 0]])
+        fuzzy_outputs = [cv2.filter2D(src=output, ddepth=-1, kernel=fuzzy_kernel) for output in outputs]
+        fuzzy_sum = numpy.sum(fuzzy_outputs, axis=0) + fuzzy_bias
+        fuzzy_sum[fuzzy_sum < 0] = 0
+        fuzzy_sum[fuzzy_sum > 1] = 1
+        outputs = [fuzzy_sum]
+
+    cv2.imwrite(args.outpath, fuzzy_sum*255)
+```
+
+---
+
+## "High Level" Features
+
+<style>
+.centered { text-align: center; margin-left: auto; margin-right: auto; }
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+<img src="./figures/AlphonsoDunn-StrokeUses.jpg" style="height: 2000px" />
+</div>
+<div class="col">
+<img src="./figures/fuzzy.jpg" style="height: 2000px" />
+</div>
+</div>
+
+---
+
+## Feature discovery
+
+* Nothing "justifies" the previous code
+* Humans hand-crafted features for years, with okay results
+* Neural networks discover them through gradient descent
+
+---
+
+## Features from LeNet
+
+<img src="./figures/LeNetAbstract-feature-map.png" />
+
+---
+
+## Features from LeNet
+
+<img src="./figures/lecun-lenet5-a12.gif" style="height: 400px"/>
+
+---
+
+## Features from LeNet
+
+<img src="./figures/lecun-lenet5-a31.gif" style="height: 400px" />
+
+---
+
+## Features from LeNet
+
+<img src="./figures/lecun-lenet5-anoise2.gif" style="height: 400px" />
+
+---
+
 ## Universal Features
 
-* Serendipitously, those features appear to be universal
-  * Meaning that they apply to almost any object types
+* Serendipitously, NN discovered features appear to be universal
+  * Robust to new types of noise
+  * Meaning that they apply to almost any object type
 * Chopping off the linear layers leaves a model that outputs features
 * It's easy to re-use those to detect new classes
   * It was once popular to combine Support Vector Machines (SVMs) with NN features for classification
 
 ---
 
-## What's a feature?
+## Support Vector Machines (1995)
 
-* Low level features come from early convolutions
-  * Could be lines: vertical, horizontal, diagonal
-  * Could be textures: hard, soft
-* High Level features are more abstract
-  * e.g. an eye or a specific material
-* Intuitively, these can be used to detect different objects
-* TODO FIXME
-* TODO Image of convolution, examples of features from art book (texture, specularity, shape)
+<img class="r-stretch" src="./figures/SupportVectorNetworks-Abstract.png" />
 
 ---
 
-## Story is murky with recent models
+## SVM "Optimality"
 
-* Some recent models are organized differently
-  * The story of simple features being converted to abstract features may not hold
-* But we don't need to use newer models
+<img class="r-stretch" src="./figures/SupportVectorNetworks-2DSeparableProblem.png" />
+
+---
+
+## SVM Hyperplanes
+
+<img class="r-stretch" src="./figures/SupportVectorNetworks-2dPoly.png" />
+
+---
+
+## Experience Learning Features
+
+* NNs proved to be better at learning features
+  * Training techniques have come a long way
+  * So has compute power
+* SVMs still have attractive qualities
+  * small training data requirements
+  * robust to noise within that data
+* Using a NN to project features into 2D space works
+
+---
+
+## Recent DNNs are more complicated
+
+* Some recent models are not straightforward like LeNet
+  * Are simple features gradually converted to high-level ones?
+* But we don't need to use newest models
   * Older models trained on older datasets can be fine
 * There are also simpler models trained on recent data
   * For example, a mobile-friendly model
 
 ---
 
-## Support Vector Machines
+## Working with SVMs
 
-* Train with only a small number of samples
-* Mathematically sound
-* Only work on collectins of numbers
 * Available in scikit python package:
   * `pip3 install scikit-learn`
+* Need a set of positive and negative examples
 
 ---
 

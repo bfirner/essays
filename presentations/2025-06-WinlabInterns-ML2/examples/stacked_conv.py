@@ -31,10 +31,10 @@ if __name__ == '__main__':
              [[0,  1, 0],   # Upper left diagonal
               [-1, 0, 1],
               [0, -1, 0]],
-             [[1, 0, -1],   # Vertical
+             [[1, 0, -1],   # Horizontal
               [1, 0, -1],
               [1, 0, -1]],
-             [[ 1,  1,  1], # Horizontal
+             [[ 1,  1,  1], # Vertical
               [ 0,  0,  0],
               [-1, -1, -1]]])
 
@@ -57,12 +57,8 @@ if __name__ == '__main__':
             # Set anything larger than 1 to 1
             filtered[filtered > 1] = 1
             outputs.append(filtered)
-        #bias = -3
-        #image = numpy.sum(outputs, axis=0) + bias
 
-    #cv2.imwrite(args.outpath, image*255)
-
-    for step in range(4):
+    for step in range(3):
         fuzzy_bias = -1
         fuzzy_kernel = numpy.array(
             [[0.4, 0, 0.4],
@@ -74,7 +70,7 @@ if __name__ == '__main__':
         fuzzy_sum[fuzzy_sum > 1] = 1
         outputs = [fuzzy_sum]
 
-    for step in range(2):
+    for step in range(3):
         fuzzy_bias = -1
         fuzzy_kernel = numpy.array(
             [[0, 0.5, 0],
