@@ -12,11 +12,11 @@ But what if you don't just want to run a model; what if you want good results?
 
 # So You've Downloaded a DNN
 
-## Now What?
+### Now What?
 
 Bernhard Firner
 
-2025-05-27
+2025-06-02
 
 ---
 
@@ -24,9 +24,10 @@ Bernhard Firner
 
 * It's easy to download a DNN
 * Doing something useful can be more difficult
-  * Avoid being too ambitious
-  * The latest and greatest can be painfully complicated
-* Start simple; only go crazy if required
+* Some tips:
+  * Don't be too ambitious
+  * Start simple, avoid the cutting edge
+  * Stay away from abandoned cdoe
 
 ---
 
@@ -42,8 +43,8 @@ Bernhard Firner
 ## Pretrained Models
 
 * First, what does pretrained mean?
-* It means you don't need to train the model
-  * A process involving large amounts of data, time, and cursing
+  * It means you don't need to train the model
+  * Saves lots of data, time, and cursing
 * The end result of training is a bunch of numbers
   * The numbers are the parameters for some linear algebra
   * In the end, a DNN is just a *lot* of math
@@ -111,7 +112,7 @@ Some DNNs are already integrated into OpenCV\
 
 ---
 
-## But I Want the Super Latest Most New Model!!!!!
+## But I Want the Super Latest Most New Model that came out last week!!!!!
 
 * No you don't
 
@@ -136,12 +137,17 @@ Some DNNs are already integrated into OpenCV\
 ## Latest and Greatest
 
 * A paper is published when a model improves mAP by any amount
+  * 0.2% improvement? Time to publish!
   * You probably don't even know what mAP is
-  * $MAP = \sum^Q_{q=1}AveP(q) / Q$
+  * $MAP = \frac{\sum^Q_{q=1}AveP(q)}{Q}$
     * AveP (Average Precision) is the area under the precision-recall curve
-  * See [mAP](https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval)
-* Real world results won't change with 1% improvements
-  * You'll have to deal with model errors either way
+  * See [mAP][1]
+* Real world results won't change with 1% (or even 5%) improvements
+  * Why? Because nothing is 100%
+    * Error handling is inevitable
+
+[1]: https://en.wikipedia.org/wiki/Evaluation_measures_(information_retrieval)
+
 
 ---
 
@@ -173,7 +179,9 @@ pip3 install opencv-python
 
 ---
 
-## Python Installation (Quick Version)
+## Python Installation
+
+### (Quick Version)
 
 <!--<section style="text-align: left;">-->
 
@@ -191,7 +199,7 @@ git lfs pull
 
 ## ONNX Models
 
-* Popularized with PyTorch, but is separate
+* Popularized by, but separate from, PyTorch
   * Available in many languages
   * In Python, use the `onnx` and `onnxruntime` libraries
 * Only for inference
