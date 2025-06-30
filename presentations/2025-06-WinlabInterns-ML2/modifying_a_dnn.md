@@ -763,9 +763,45 @@ if __name__ == '__main__':
 
 ---
 
-## More Topics
+## Starting From Scratch
 
-* You need something completely new
-  * This means starting from data collection!
-  * Also labelling!
-  * Also deciding on training targets. Oh no!
+* What if you need something new?
+* ProTip: the data is the hardest part
+  * Garbage in, garbage out
+* Try to change your task so that data collection and labelling are easy
+
+---
+
+## Good Ideas
+* Object presence Vs bounding box
+* End to end (image in, answer out) Vs myriad predictions
+* Separate models Vs one giant mega model
+
+---
+
+## Autolabelling
+
+* If something can label for you, use it
+* Yes, labels won't be perfect
+  * They never will be
+
+---
+
+## Data Cleaning
+
+* Find problem data while training
+  * Look at loss, find worst examples, check them manually
+* Once you have a decent model, use it to analyze data that you've labelled
+* Iterate
+
+---
+
+## Uh-Ohs to go
+
+* Don't start with the biggest, meanest model
+* Don't start with temporal models
+  * LSTMs etc
+* Don't start with adversarial models
+  * GANs etc
+* Don't expect sim + reinforcement learning to work IRL
+* Don't treat your transformer-based LLM like it is anything more than a token predictor
