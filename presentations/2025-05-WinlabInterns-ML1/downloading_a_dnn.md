@@ -61,10 +61,45 @@ Bernhard Firner
   * So many details
 * A pretrained model lets you worry about your data first, model second
 
-<!--
-TODO FIXME
-Show some examples of cropping and scaling, or promise to show some
--->
+
+---
+
+## Resnet Example
+
+<style>
+.container { display: flex; }
+.col {flex: 1;}
+</style>
+
+<div class="container">
+<div class="col">
+
+* Model input is 3x224x224
+  * 3 is the number of channels
+    * RGB or YUV?
+* Should the target be centered and cropped?
+* Downscaled if it's too large?
+
+</div>
+<div class="col">
+<img class="r-stretch" src="./figures/ppresnet_top.png" />
+
+</div>
+</div>
+
+---
+
+## More Complications
+
+* What is the input image range?
+  * \[0,1\]?
+  * \[0,255\]?
+  * \[-1,1\]?
+  * If your input is wrong, you'll get crazy results!
+* In many cases, inputs are set to 0 mean, and unit variance (= 1)
+  * For each image, subtract the mean, and divide by the variance
+  * Wait, which mean and variance?
+    * Per image? Or from the training dataset?
 
 ---
 
