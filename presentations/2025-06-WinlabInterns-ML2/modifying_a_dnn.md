@@ -34,7 +34,7 @@ Bernhard Firner
 
 * Re-used code is the best code, re-used models are the best models
   * So try using a pretrained DNNs for your tasks!
-* This talk:
+* Key points:
   * don't start from scratch
   * save a ton of time and effort with re-use
   * innovate with existing models to create new applications
@@ -45,7 +45,7 @@ Bernhard Firner
 
 * There are plenty of pretrained DNNs available
 * Limited by the available datasets
-  * Good for classifying people and toilet seats
+  * Good for classifying people, cats, and toilet seats
   * Can be bad for new objects
   * Bad for esoteric items or traits
   * Bad for distinguishing subsets
@@ -118,10 +118,10 @@ Bernhard Firner
 
 <div class="container">
 <div class="col">
-<img src="./figures/PenAndInkDrawing-AlphonsoDunn.jpg" style="height: 1000px" />
+<img src="./figures/PenAndInkDrawing-AlphonsoDunn.jpg" style="height: 900px" />
 </div>
 <div class="col">
-<img src="./figures/AlphonsoDunn-StrokeUses.jpg" style="height: 1000px" />
+<img src="./figures/AlphonsoDunn-StrokeUses.jpg" style="height: 900px" />
 </div>
 </div>
 
@@ -207,7 +207,7 @@ Filter
 
 </div>
 <div class="col">
-<img src="./figures/vertical.png" style="height: 1000px" />
+<img src="./figures/vertical.png" style="height: 900px" />
 </div>
 </div>
 
@@ -241,7 +241,7 @@ Filter
 
 </div>
 <div class="col">
-<img src="./figures/horizontal.png" style="height: 1000px" />
+<img src="./figures/horizontal.png" style="height: 900px" />
 </div>
 </div>
 
@@ -274,7 +274,7 @@ Filter
 
 </div>
 <div class="col">
-<img src="./figures/diag_ul_lr.png" style="height: 1000px" />
+<img src="./figures/diag_ul_lr.png" style="height: 900px" />
 </div>
 </div>
 
@@ -307,7 +307,7 @@ Filter
 
 </div>
 <div class="col">
-<img src="./figures/diag_ll_ur.png" style="height: 1000px" />
+<img src="./figures/diag_ll_ur.png" style="height: 900px" />
 </div>
 </div>
 
@@ -331,19 +331,19 @@ Filter
 
 ## Features from LeNet
 
-<img src="./figures/lecun-lenet5-a12.gif" style="height: 400px"/>
+<img src="./figures/lecun-lenet5-a12.gif" style="height: 600px"/>
 
 ---
 
 ## Features from LeNet
 
-<img src="./figures/lecun-lenet5-a31.gif" style="height: 400px" />
+<img src="./figures/lecun-lenet5-a31.gif" style="height: 600px" />
 
 ---
 
 ## Features from LeNet
 
-<img src="./figures/lecun-lenet5-anoise2.gif" style="height: 400px" />
+<img src="./figures/lecun-lenet5-anoise2.gif" style="height: 600px" />
 
 ---
 
@@ -799,9 +799,10 @@ if __name__ == '__main__':
 ## Uh-Ohs to go
 
 * Don't start with the biggest, meanest model
-* Don't start with temporal models
-  * LSTMs etc
+* Multi-frame inputs are easier than temporal models
+  * LSTMs, RNNs, etc are difficult
 * Don't start with adversarial models
   * GANs etc
 * Don't expect sim + reinforcement learning to work IRL
-* Don't treat your transformer-based LLM like it is anything more than a token predictor
+* Don't treat your transformer-based LLM as more than a token predictor
+* Don't use NN's for tabular data
