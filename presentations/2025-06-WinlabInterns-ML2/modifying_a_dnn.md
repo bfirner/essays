@@ -769,6 +769,27 @@ if __name__ == '__main__':
 * ProTip: the data is the hardest part
   * Garbage in, garbage out
 * Try to change your task so that data collection and labelling are easy
+* If you do need to train a model, you may not need to start with nothing
+
+---
+
+## Transfer Learning
+
+* If there is a big model that does what you need, but it is too big
+* You "transfer" its knowledge onto a smaller model
+* Use the large model to create training data
+  * Usually constrained, e.g. in just one parking lot
+* Directly train the small model to copy the large model outputs
+  * Because you are only operating in a small region, this work
+
+---
+
+## Autolabelling
+
+* Similar to transfer learning
+* If something can label for you, use it
+* Yes, labels won't be perfect
+  * They never will be
 
 ---
 
@@ -776,14 +797,6 @@ if __name__ == '__main__':
 * Object presence Vs bounding box
 * End to end (image in, answer out) Vs myriad predictions
 * Separate models Vs one giant mega model
-
----
-
-## Autolabelling
-
-* If something can label for you, use it
-* Yes, labels won't be perfect
-  * They never will be
 
 ---
 
