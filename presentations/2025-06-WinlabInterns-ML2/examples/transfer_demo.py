@@ -134,6 +134,9 @@ transfer_labels = [
 #    torch.nn.ReLU(),
 #    torch.nn.Linear(in_features=100, out_features=len(transfer_labels)))                  # Target classes
 
+# TODO FIXME Look at the pytorch models as low effort starting points: https://docs.pytorch.org/vision/main/models.html
+# TODO FIXME Also look at using PCA on the features and forcing the tiny DNN's features to match with the original features that were correlated with the desired classes
+
 # Input is a 56x56 image
 tiny = torch.nn.Sequential(
     torch.nn.Conv2d(in_channels=3, out_channels=32, kernel_size=5, padding=0, stride=1),  # 32x52x52
@@ -241,8 +244,8 @@ def run_demo():
             # Only train with the class scores that we care about
             for idx, scores in enumerate(class_scores):
                 # Our model will consume 56x56 images
-                # But don't sample if one of our target classes isn't in the top 5
-                top_classes = numpy.argsort(scores)[-5:]
+                # But don't sample if one of our target classes isn't in the top 3
+                top_classes = numpy.argsort(scores)[-3:]
                 targets_in_top = [imagenet_labels[cidx] in transfer_labels for cidx in top_classes]
                 draw_color = text_red
                 if any(targets_in_top):
