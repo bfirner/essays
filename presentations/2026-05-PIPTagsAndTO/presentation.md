@@ -47,7 +47,7 @@ Bernhard Firner
 
 ## Problems
 
-* We wanted bigger data and a smarter Internet of Things
+* We wanted more data, pervasive sensors, and a smarter Internet of Things
 * The world wasn't actually ready to use all of that data
 * But, at the time, we had another fundamental issue
   * Wireless capacity isn't limitless
@@ -101,9 +101,9 @@ Extend graph to 20 years.
 <div class="container">
 <div class="col">
 
-* Minimizing energy consumption begins with measurements
-* The first spike is from waking up the MCU
-* The second, long plateau is data transmission
+* Energy consumption optimization begins with measurements
+* We used an oscilloscope to measure power consumption
+  * Just calculate the area under the curve
 
 </div>
 <div class="col">
@@ -117,20 +117,20 @@ Extend graph to 20 years.
 
 ## Advances
 
-* That example was from 2008
+* That trace was from 2008
 * Here is the result of a few years of hardware and software optimizations
 
 <div class="container">
 <div class="col">
 
-<img style="width: 80%" class="r-stretch" src="./figures/oscilloscope_9.jpg" />
+<img style="width: 90%" class="r-stretch" src="./figures/oscilloscope_9.jpg" />
 <br/>
 <small>We cleaned up the circuit, shortened the preamble, and replaced CRC with parity.</small>
 
 </div>
 <div class="col">
 
-<img style="width: 80%" class="r-stretch" src="./figures/temp16_annotated.jpg" />
+<img style="width: 90%" class="r-stretch" src="./figures/temp16_annotated.jpg" />
 <br/>
 <small>Each type of sensing is done at a different time schedule, decoupling them from radio activity. This is temperature sensing.</small>
 
@@ -154,7 +154,7 @@ Extend graph to 20 years.
 * A light, temperature, and humidity sensor could run for 8-9 years on a coin cell
   * Temperature and humidity sampled every 15 seconds
   * Light samples every 15s
-  * Update every 15s
+  * Transmit every 15s
 * Every 120s a long beacon is sent with logarithmically placed history
   * This fills in gaps during outages
 
@@ -162,11 +162,11 @@ Extend graph to 20 years.
 
 ## Side Story: Sensing
 
-* All of the sensors were power optimized
+* All sensing is power optimized
 * Light sensing, for example, involves charging an LED
-  * The LED will discharge more rapidly if exposed to the light
-* To sense, the MCU wakes up and charges the LED, then return to sleep
-  * And interrupt wakes it when the LED discharges, and the time is recorded
+  * The LED discharges more rapidly if exposed to the light
+* To sense, the MCU wakes up and charges the LED, then returns to sleep
+  * An interrupt wakes it when the LED discharges, and the time is recorded
 
 ---
 
@@ -204,10 +204,22 @@ Extend graph to 20 years.
 ## Improving Captures
 
 * If the distant transmitter begins first, it will be interrupted by the stronger signal
-  * And they will both be lost, since the radio was busy
+  * And they will both be lost, since the radio was busy with the weak signal
+
+<div class="container">
+<div class="col">
+
 * Solution, part 1: Use two radios on the receiver
 * Solution, part 2: Use multiple receivers, so neither packet is lost
   * Arrange the receivers so pairwise collisions at the same power level are minimized
+
+</div>
+<div class="col">
+<img style="width: 70%" class="r-stretch" src="./figures/bpip.jpg" />
+<br/>
+<small>A two radio receiver.</small>
+</div>
+</div>
 
 -v-
 

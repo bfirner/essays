@@ -76,20 +76,20 @@ mcu_duty_cycle(years, energy) = 100*(mcu_energy_left(years, energy) / (radio_cur
 set output "maximum_duty_cycle.png"
 set xrange [1:20]
 set logscale y
-set yrange [0.01:16]
+set yrange [0.001:16]
 
-set label "225 mAh\n(CR2032)" at 2*2.25, 1.1*duty_cycle(2*2.25, 225) center front
-set label "610 mAh\n(CR2450)" at 2*4, 1.1*duty_cycle(2*4, 610) center front
-set label "1200 mAh\n(AAA alkaline)" at 2*6, 1.1*duty_cycle(2*6, 1200) center front
-set label "2700 mAh\n(AA alkaline)" at 2*9, 1.1*duty_cycle(2*9, 2700) center front
+set label "225 mAh\n(CR2032)" at 1.8*2.25, 1.1*duty_cycle(2*2.25, 225) center front
+#set label "610 mAh\n(CR2450)" at 2*4, 1.1*duty_cycle(2*4, 610) center front
+set label "1200 mAh\n(AAA alkaline)" at 1.6*6, 1.1*duty_cycle(2*6, 1200) center front
+set label "2700 mAh\n(AA alkaline)" at 1.8*9, 1.1*duty_cycle(2*9, 2700) center front
 #set label "8000 mAh\n(C alkaline)" at 2*4, 1.1*duty_cycle(2*4, 8000) center front
 set label "12000 mAh\n(D alkaline)" at 2*6.75, 1.1*duty_cycle(2*6.75, 12000) center front
 
 plot duty_cycle(x, 225) w l ls 1 lw 4 not,\
-     duty_cycle(x, 610) w l ls 2 lw 4 not,\
-     duty_cycle(x, 1200) w l ls 3 lw 4 not,\
-     duty_cycle(x, 2700) w l ls 4 lw 4 not,\
-     duty_cycle(x, 12000) w l ls 5 lw 4 not
+     duty_cycle(x, 1200) w l ls 2 lw 4 not,\
+     duty_cycle(x, 2700) w l ls 3 lw 4 not,\
+     duty_cycle(x, 12000) w l ls 4 lw 4 not
+#     duty_cycle(x, 610) w l ls 2 lw 4 not,\
 #     duty_cycle(x, 8000) w l ls 5 lw 4 not,\
 
 
