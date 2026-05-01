@@ -1,0 +1,24 @@
+$$
+\begin{eqnarray}
+\lefteqn{P(\mbox{collision} | \mbox{N transmitters})} \nonumber \\
+&=& 1 - P(\mbox{no collision})^{N-1} \nonumber \\
+&=& 1 - (1 - (1 - P_{capture})\frac{2\times \delta}{\tau})^{N-1}
+\label{eqn:nway_collision}
+\end{eqnarray}
+
+
+\begin{eqnarray}
+\frac{1}{l_1^\alpha} \geq \frac{10^{\Delta/10}}{l_2^{\alpha}} \nonumber \\
+l_1 \leq l_2 10^{-\Delta/10\alpha} \nonumber \\
+l_1 \leq l_2 C, \mbox{where C} = 10^{-\Delta/10\alpha}
+\label{eqn:c_equation}
+\end{eqnarray}
+We can now integrate over the probability density function of the uniform distribution to find the probability
+of a relative signal strength being greater than or equal to some value, $\Delta$, by finding
+the probability that one transmitter is farther away than another transmitter by a factor of C.
+\begin{eqnarray}
+\lefteqn{\int_a^b \! \frac{1}{b-a} \int_a^{cx} \! \frac{1}{b-a} \, dy \, dx} \nonumber \\
+&=& \frac{1}{(b-a)^2} \left( \frac{cb^2}{2} - ab - \frac{ca^2}{2} + a^2 \right) \nonumber \\
+&=& \frac{c}{2} \mbox{ if a} = 0.
+\label{eqn:uniform_equation}
+\end{eqnarray}
