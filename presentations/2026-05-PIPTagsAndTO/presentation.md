@@ -261,6 +261,11 @@ l_1 &amp;\leq l_2 C, \text{where C} = 10^{-\Delta/10\alpha}
 <img style="width: 65%" class="r-stretch" src="./figures/deployment_map.png" />
 </div>
 
+<!--
+Images converted with
+convert -density 300 /home/bfirner/projects/Winlab/gitpapers/TO_Architecture/Figures/deployment_map.eps -quality 100 deployment_map.png
+-->
+
 ---
 
 ## Thoughts
@@ -271,3 +276,19 @@ l_1 &amp;\leq l_2 C, \text{where C} = 10^{-\Delta/10\alpha}
 * Why didn't the Internet of Things take off?
   * Everyone wants special-purpose applications, but not everyone is a programmer
   * Perhaps now that AI can code for you, this idea will take off again
+
+---
+
+## Tea Time
+
+<div class="col">
+<img style="width: 65%" class="r-stretch" src="./figures/GRAILTeaTime.png" />
+</div>
+
+-v-
+
+## The Deployment
+
+<div class="col">
+<img style="width: 65%" class="r-stretch" src="./figures/map_screenshot.png" />
+</div>
